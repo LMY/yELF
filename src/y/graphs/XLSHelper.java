@@ -40,10 +40,11 @@ import org.apache.poi.ss.usermodel.charts.ChartLegend;
 import org.apache.poi.ss.usermodel.charts.DataSources;
 import org.apache.poi.ss.usermodel.charts.LegendPosition;
 import org.apache.poi.ss.usermodel.charts.ScatterChartData;
-import org.apache.poi.ss.usermodel.charts.ScatterChartSerie;
+import org.apache.poi.ss.usermodel.charts.ScatterChartSeries;
 import org.apache.poi.ss.usermodel.charts.ValueAxis;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 
 
@@ -67,13 +68,15 @@ public class XLSHelper
 
 	public static boolean saveData(String filename, ElfValue[][] dayvalues, int[] mediane, int[] maxs, int[] counts, double sensibilita, boolean save_grafico)
 	{
+		Workbook wb = null;
+		
 		try {
 			if (Utils.abortOnExistingAndDontOverwrite(filename))
 				return false;
 			
 			final int maxi = getIndexOfMax(mediane);
 			
-		    Workbook wb = new XSSFWorkbook();
+		    wb = new XSSFWorkbook();
 		    
 		    CreationHelper createHelper = wb.getCreationHelper();
 		    Sheet sheet = wb.createSheet(Config.getResource("TitleStats"));
@@ -242,16 +245,16 @@ public class XLSHelper
 		        ChartDataSource<Number> ys_qual = DataSources.fromNumericCellRange(sheetdata, new CellRangeAddress(1, maxline, 7, 7));
 		        ChartDataSource<Number> ys_att = DataSources.fromNumericCellRange(sheetdata, new CellRangeAddress(1, maxline, 8, 8));
 		        
-		        ScatterChartSerie data_val = data.addSerie(xs, ys_val);
+		        ScatterChartSeries data_val = data.addSerie(xs, ys_val);
 		        data_val.setTitle(Config.getResource("TitleMeasuredValues"));
 		        
-		        ScatterChartSerie data_sens = data.addSerie(xs, ys_sens);
+		        ScatterChartSeries data_sens = data.addSerie(xs, ys_sens);
 		        data_sens.setTitle(Config.getResource("TitleInstrumentSens"));
 		        
-		        ScatterChartSerie data_qual = data.addSerie(xs, ys_qual);
+		        ScatterChartSeries data_qual = data.addSerie(xs, ys_qual);
 		        data_qual.setTitle(Config.getResource("TitleQualityTarget"));
 		        
-		        ScatterChartSerie data_att = data.addSerie(xs, ys_att);
+		        ScatterChartSeries data_att = data.addSerie(xs, ys_att);
 		        data_att.setTitle(Config.getResource("TitleAttentionValue"));
 		  
 		        chart.plot(data, bottomAxis, leftAxis);  
@@ -265,6 +268,11 @@ public class XLSHelper
 		catch (Exception e) {
 			Utils.MessageBox(Config.getResource("MsgErrorXlsx")+"\n"+e.toString(), Config.getResource("TitleError"));
 			return false;
+		}
+		finally {
+			if (wb != null)
+				try { wb.close(); }
+				catch (IOException e) {}
 		}
 	}
 	
@@ -508,6 +516,7 @@ public class XLSHelper
 	    
 	    FileOutputStream fileOut = new FileOutputStream(filename);
 	    wb.write(fileOut);
+	    wb.close();
 	    fileOut.close();
 	}
 }
