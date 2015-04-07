@@ -1,4 +1,6 @@
-/libs/
-/debug.txt
 /yAmbElf-CHANGELOG.txt
 /yElf.conf
+/build/
+.project
+.classpath
+.settings
