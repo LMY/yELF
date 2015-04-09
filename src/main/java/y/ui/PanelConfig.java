@@ -67,7 +67,7 @@ public class PanelConfig extends JPanel
 		newform.setVisible(true);
 	}
 	
-	private JComboBox comboLanguage;
+	private JComboBox<String> comboLanguage;
 	
 	private JButton buttonSave;
 	private JButton buttonReload;
@@ -96,8 +96,8 @@ public class PanelConfig extends JPanel
 	private JTable srbSeries;
 	private JTable emSeries;
 	
-	private JComboBox comboOpSRB;
-	private JComboBox comboOpELF;
+	private JComboBox<String> comboOpSRB;
+	private JComboBox<String> comboOpELF;
 	
 	
 	private String[] configColumnNames;
@@ -112,10 +112,10 @@ public class PanelConfig extends JPanel
 		JPanel mainpanel = new JPanel();
 		mainpanel.setLayout(new GridLayout(0, 2));
 		
-		comboLanguage = new JComboBox(avaibleLanguages);
+		comboLanguage = new JComboBox<String>(avaibleLanguages);
 		
-		comboOpSRB = new JComboBox(DataFunction.getNames());
-		comboOpELF = new JComboBox(DataFunction.getNames());
+		comboOpSRB = new JComboBox<String>(DataFunction.getNames());
+		comboOpELF = new JComboBox<String>(DataFunction.getNames());
 		
 		buttonSave = new JButton(Config.getResource("TitleSave"));
 		buttonReload = new JButton(Config.getResource("TitleReload"));
@@ -394,7 +394,7 @@ public class PanelConfig extends JPanel
 	
     private void setColumnAsConfigSerieUsages(JTable table, int i) {
 		TableColumn theColumn = table.getColumnModel().getColumn(i);
-		JComboBox comboBox = new JComboBox();
+		JComboBox<String> comboBox = new JComboBox<String>();
 		for (String s : ConfigSerie.USAGES)
 			comboBox.addItem(s);
 		theColumn.setCellEditor(new DefaultCellEditor(comboBox));

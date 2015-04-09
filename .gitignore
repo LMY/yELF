@@ -1,7 +1,8 @@
+/bin/
+/build/
 /yAmbElf-CHANGELOG.txt
 /yElf.conf
-/build/
-.project
 .classpath
+.gradle
+.project
 .settings
-/bin/

@@ -19,11 +19,11 @@ public class FileList extends JPanel
 {
 	private static final long serialVersionUID = 263483585229461634L;
 
-	private JList filelist;
+	private JList<String> filelist;
 	private JButton addFile;
 	private JButton removeFile;
 	
-	private DefaultListModel filelistModel;
+	private DefaultListModel<String> filelistModel;
 
 	public FileList()
 	{
@@ -45,8 +45,8 @@ public class FileList extends JPanel
 			}
 		});
 		
-		filelistModel = new DefaultListModel();
-		filelist = new JList(filelistModel);
+		filelistModel = new DefaultListModel<String>();
+		filelist = new JList<String>(filelistModel);
 		filelist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		filelist.setLayoutOrientation(JList.VERTICAL);
 		filelist.setVisibleRowCount(-1);

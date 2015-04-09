@@ -40,7 +40,7 @@ public class PanelCurrents  extends PanelYEM {
 	private JButton loadButton;
 	private JSpinner daSpinner;
 	private JSpinner aSpinner;
-	private JComboBox comboPeriod;
+	private JComboBox<String> comboPeriod;
 	
 	private JTextField folderText;
 	private JButton folderChange;
@@ -95,7 +95,7 @@ public class PanelCurrents  extends PanelYEM {
 
 		daSpinner = PanelELF.createDateSpinner();
 		aSpinner = PanelELF.createDateSpinner();
-		comboPeriod = new JComboBox(new String[] { Config.getResource("ItemFromTo"), Config.getResource("ItemDaily"), Config.getResource("ItemMonthly"), Config.getResource("ItemYearly")});
+		comboPeriod = new JComboBox<String>(new String[] { Config.getResource("ItemFromTo"), Config.getResource("ItemDaily"), Config.getResource("ItemMonthly"), Config.getResource("ItemYearly")});
 		daSpinner.addChangeListener(cl);
 		aSpinner.addChangeListener(cl);
 
@@ -303,8 +303,8 @@ public class PanelCurrents  extends PanelYEM {
 		private static final long serialVersionUID = -4154283294966066872L;
 
 		private String path;
-		private JList filelist;
-		private DefaultListModel filelistModel;
+		private JList<String> filelist;
+		private DefaultListModel<String> filelistModel;
 
 		public FileBrowserList()
 		{
@@ -312,8 +312,8 @@ public class PanelCurrents  extends PanelYEM {
 			
 			path = "";
 
-			filelistModel = new DefaultListModel();
-			filelist = new JList(filelistModel);
+			filelistModel = new DefaultListModel<String>();
+			filelist = new JList<String>(filelistModel);
 			filelist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			filelist.setLayoutOrientation(JList.VERTICAL);
 			filelist.setVisibleRowCount(-1);

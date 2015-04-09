@@ -451,7 +451,7 @@ public class Config
 	}
 	public void setLocale(Locale locale) {
 		this.locale = locale;
-		resources = ResourceBundle.getBundle("y.Messages", locale);
+		resources = ResourceBundle.getBundle("Messages", locale);
 	}
 	public ResourceBundle getResources() {
 		return resources;

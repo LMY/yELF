@@ -1,7 +1,9 @@
 apply plugin: 'java'
+apply plugin: 'application'
 apply plugin: 'eclipse'
 
-sourceCompatibility = 1.6
+mainClassName = "y.yElf"
+sourceCompatibility = 1.8
 version = '2.16'
 
 task fatJar(type: Jar) {
@@ -13,6 +15,20 @@ task fatJar(type: Jar) {
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar    
+}
+
+task copyLibs(type: Copy) {
+    into "$buildDir/libs/libs"
+    from configurations.runtime
+}
+
+jar {
+	dependsOn copyLibs
+	manifest {
+        attributes 'Implementation-Title': 'yELF',
+                   'Implementation-Version': version,
+                   'Main-Class': 'y.yElf'
+    }
 }
 
 repositories {
