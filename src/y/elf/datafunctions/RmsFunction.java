@@ -9,12 +9,12 @@ public class RmsFunction extends DataFunction {
 	}
 	
 	@Override
-	public int function(int[] data) {
+	public double function(int[] data) {
 		double v = 0;
 		for (int x : data)
 			v += x*x;
 		if (data.length > 0)
 			v /= data.length;
-		return (int) Math.round(Math.sqrt(v));
+		return Math.sqrt(v);
 	}
 }

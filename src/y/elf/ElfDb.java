@@ -97,7 +97,7 @@ public class ElfDb extends MeasurementDb
 			opValueCount[i] = count_valids(sampledData[i]);
 
 			if (opValueCount[i] > 0) {
-				opValues[i] = function.function(sampledData[i]);
+				opValues[i] = (int)Math.round(function.function(sampledData[i]));
 				opMaxDay[i] = maxx(sampledData[i]);
 			}
 			else {

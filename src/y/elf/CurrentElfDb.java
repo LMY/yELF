@@ -147,8 +147,8 @@ public class CurrentElfDb {
 			return -999;
 		}
 		
-		final double meancur = meanSerie(currentDb);
-		final double meanelf = meanSerie(elfDb);
+		final double meancur = meanSerie(currentDb); // new AverageFunction().functionCurr(currentDb);
+		final double meanelf = meanSerie(elfDb); // new AverageFunction().function(elfDb);
 		
 		double num = 0;
 		double dcur = 0;

@@ -9,7 +9,7 @@ public class CountFunction extends DataFunction {
 	}
 	
 	@Override
-	public int function(int[] data) {
+	public double function(int[] data) {
 		return data.length;
 	}
 }

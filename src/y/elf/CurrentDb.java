@@ -80,7 +80,7 @@ public class CurrentDb extends MeasurementDb {
 		opMaxDay = new int[periods.length];
 		
 		for (int i=0; i<sampledData.length; i++) {
-			opValues[i] = function.functionCurr(sampledData[i]);
+			opValues[i] = (int)Math.round(function.functionCurr(sampledData[i]));
 			opValueCount[i] = sampledData[i].length;
 			opMaxDay[i] =  maxx(sampledData[i]);
 		}

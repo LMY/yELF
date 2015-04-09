@@ -9,8 +9,8 @@ public class AverageFunction extends DataFunction {
 	}
 	
 	@Override
-	public int function(int[] data) {
-		int sum = 0;
+	public double function(int[] data) {
+		double sum = 0;
 		
 		for (int i : data)
 			sum += i;

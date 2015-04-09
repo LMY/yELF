@@ -26,7 +26,8 @@ public class RandomFunction extends DataFunction {
 		random = new Random(seed);
 	}
 	
-	public int function(int[] data) {
-		return random.nextInt();
+	public double function(int[] data) {
+//		return random.nextInt();
+		return random.nextDouble();
 	}
 }

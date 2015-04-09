@@ -11,14 +11,14 @@ public class MedianaFunction extends DataFunction {
 	}
 	
 	@Override
-	public int function(int[] values) {
+	public double function(int[] values) {
 		Arrays.sort(values);
 
 		if (values.length == 0)
 			return 0;
 		else if (values.length % 2 == 0)
-			return (int)Math.round(((double)values[values.length/2] + (double)values[values.length/2 - 1])/2);
+			return ((double)values[values.length/2] + (double)values[values.length/2 - 1])/2;
 		else
-		    return values[values.length/2];
+		    return (double)values[values.length/2];
 	}
 }

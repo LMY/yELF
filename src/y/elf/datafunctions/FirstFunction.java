@@ -9,7 +9,7 @@ public class FirstFunction extends DataFunction {
 	}
 	
 	@Override
-	public int function(int[] values) {
+	public double function(int[] values) {
 		return values.length > 0 ? values[0] : 0;
 	}
 }

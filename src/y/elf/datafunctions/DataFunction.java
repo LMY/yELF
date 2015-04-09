@@ -42,14 +42,14 @@ public abstract class DataFunction {
 	public abstract String getName();
 	
 	
-	public abstract int function(int[] data);
+	public abstract double function(int[] data);
 	
-	public int function(List<ElfValue> values)
+	public double function(List<ElfValue> values)
 	{
 		return function(values.toArray(new ElfValue[values.size()]));
 	}
 	
-	public int function(ElfValue[] values)
+	public double function(ElfValue[] values)
 	{
 		int valids = 0;
 		for (int i=0; i<values.length; i++)
@@ -64,12 +64,12 @@ public abstract class DataFunction {
 		return function(v);
 	}
 	
-	public int functionCurr(List<CurrentValue> values)
+	public double functionCurr(List<CurrentValue> values)
 	{
 		return functionCurr(values.toArray(new CurrentValue[values.size()]));
 	}
 	
-	public int functionCurr(CurrentValue[] values)
+	public double functionCurr(CurrentValue[] values)
 	{
 		int[] v = new int[values.length];
 		for (int i=0; i<values.length; i++)

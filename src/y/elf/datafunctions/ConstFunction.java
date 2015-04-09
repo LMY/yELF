@@ -8,21 +8,21 @@ public class ConstFunction extends DataFunction {
 		return NAME+" "+value;
 	}
 	
-	private int value;
+	private double value;
 	
-	public ConstFunction(int value) {
+	public ConstFunction(double value) {
 		this.value = value;
 	}
 
 	@Override
-	public int function(int[] data) {
+	public double function(int[] data) {
 		return value;
 	}
 
-	public int getValue() {
+	public double getValue() {
 		return value;
 	}
-	public void setValue(int value) {
+	public void setValue(double value) {
 		this.value = value;
 	}
 }

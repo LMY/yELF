@@ -9,7 +9,7 @@ public class LastFunction extends DataFunction {
 	}
 	
 	@Override
-	public int function(int[] values) {
+	public double function(int[] values) {
 		return values.length > 0 ? values[values.length-1] : 0;
 	}
 }

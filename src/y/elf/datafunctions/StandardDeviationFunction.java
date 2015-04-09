@@ -9,7 +9,7 @@ public class StandardDeviationFunction extends DataFunction {
 	}
 	
 	@Override
-	public int function(int[] data) {
+	public double function(int[] data) {
 		
 		if (data.length <= 1)
 			return 0;
@@ -22,6 +22,6 @@ public class StandardDeviationFunction extends DataFunction {
 			M += (data[i]-M)/(i+1);					// M[k] = M[k-1] + (x[k] - M[k-1])/k
 		}
 		
-		return (int) Math.round(Math.sqrt(Q/data.length));
+		return Math.sqrt(Q/data.length);
 	}
 }
