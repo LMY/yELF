@@ -19,8 +19,10 @@
 
 package y.elf;
 
+import org.joda.time.DateTime;
+
 public class CurrentValue extends MeasurementValue  {
-	public CurrentValue(TimeValue time, int value)
+	public CurrentValue(DateTime time, int value)
 	{
 		super(time, value);
 	}

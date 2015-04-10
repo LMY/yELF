@@ -1,7 +1,9 @@
 package y.elf;
 
+import org.joda.time.DateTime;
+
 public class MeasurementValue implements Comparable<MeasurementValue> {
-	private TimeValue time;
+	private DateTime time;
 	private int value;
 
 	public static final int PRECISION = 100;
@@ -11,15 +13,15 @@ public class MeasurementValue implements Comparable<MeasurementValue> {
 	public static String valueIntToString(int value)  { return new Double((double)value/PRECISION).toString(); }
 	public static int valueStringToInt(String value)  { return (int) (PRECISION*Double.parseDouble(value)); }
 	
-	public MeasurementValue(TimeValue time, int value)
+	public MeasurementValue(DateTime time, int value)
 	{
 		this.time = time;
 		this.value = value;
 	}
-	public TimeValue getTime() {
+	public DateTime getTime() {
 		return time;
 	}
-	public void setTime(TimeValue time) {
+	public void setTime(DateTime time) {
 		this.time = time;
 	}
 	public int getValue() {

@@ -10,7 +10,7 @@ task fatJar(type: Jar) {
 	manifest {
         attributes 'Implementation-Title': 'yELF',
                    'Implementation-Version': version,
-                   'Main-Class': 'y.yElf'
+                   'Main-Class': mainClassName
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
@@ -27,7 +27,7 @@ jar {
 	manifest {
         attributes 'Implementation-Title': 'yELF',
                    'Implementation-Version': version,
-                   'Main-Class': 'y.yElf'
+                   'Main-Class': mainClassName
     }
 }
 
@@ -39,10 +39,11 @@ repositories {
 }
 
 dependencies {
+	compile 'joda-time:joda-time:2.7'
 	compile 'org.apache.poi:poi-ooxml:3.11'
 	compile 'org.apache.poi:poi:3.11'
 	compile 'org.jfree:jfreechart:1.0.19'
-	compile "say.swing:jfontchooser:1.0.5"
+	compile 'say.swing:jfontchooser:1.0.5'
 }
 
 uploadArchives {

@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.joda.time.DateTime;
+
 import y.utils.Config;
 import y.utils.Utils;
 
@@ -52,17 +54,17 @@ public class CurrentElfDb {
 		return db;
 	}
 	
-	public CurrentElfDb cut(TimeValue from, TimeValue to, int dt) {
+	public CurrentElfDb cut(DateTime from, DateTime to, int dt) {
 		CurrentElfDb db = new CurrentElfDb();
 		
 		for (CurrentValue cv : currentDb) {
-			final TimeValue tv = cv.getTime();
+			final DateTime tv = cv.getTime();
 			if (tv.compareTo(from) >= 0 && tv.compareTo(to) <= 0)
 				db.currentDb.add(cv);
 		}
 				
 		for (ElfValue ev : elfDb) {
-			final TimeValue tv = ev.getTime();
+			final DateTime tv = ev.getTime();
 			if (tv.compareTo(from) >= 0 && tv.compareTo(to) <= 0)
 				db.elfDb.add(dt == 0 ? ev : ev.shift(dt));
 		}
@@ -74,8 +76,8 @@ public class CurrentElfDb {
 	// delete from ElfValues and currentValues all entries with TimeValue not in both lists
 	public int match() {
 		
-		Set<TimeValue> etv = new HashSet<TimeValue>();
-		Set<TimeValue> ctv = new HashSet<TimeValue>();
+		Set<DateTime> etv = new HashSet<DateTime>();
+		Set<DateTime> ctv = new HashSet<DateTime>();
 		
 		for (CurrentValue cv : currentDb)
 			ctv.add(cv.getTime());
@@ -114,8 +116,8 @@ public class CurrentElfDb {
 		return csz == esz ? csz : -1; // -1 if different, size otherwise
 	}
 
-	public TimeValue getStartDate() { return currentDb.size() <= 0 ? new TimeValue(2000, 1, 1, 0, 0) : currentDb.get(0).getTime(); }
-	public TimeValue getEndDate() { return currentDb.size() <= 0 ? new TimeValue(2999, 12, 12, 23, 59) : currentDb.get(currentDb.size()-1).getTime(); }
+	public DateTime getStartDate() { return currentDb.size() <= 0 ? new DateTime(2000, 1, 1, 0, 0) : currentDb.get(0).getTime(); }
+	public DateTime getEndDate() { return currentDb.size() <= 0 ? new DateTime(2999, 12, 12, 23, 59) : currentDb.get(currentDb.size()-1).getTime(); }
 	
 	public boolean saveAs(String filename, String csvSeparator) {
 		try {
@@ -127,7 +129,7 @@ public class CurrentElfDb {
 				final ElfValue ev = elfDb.get(i);
 				final CurrentValue cv = currentDb.get(i);
 				
-				bw.write(ev.getTime().toDateString() + csvSeparator + ev.getTime().toTimeString() + csvSeparator);
+				bw.write(Utils.toDateString(ev.getTime()) + csvSeparator + Utils.toTimeString(ev.getTime()) + csvSeparator);
 				bw.write(ElfValue.valueIntToString(ev.getValue()) + csvSeparator + cv.getValue() + "\n");
 			}
 			

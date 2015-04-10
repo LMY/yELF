@@ -25,8 +25,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.joda.time.DateTime;
+
 import y.elf.CurrentDb;
-import y.elf.TimeValue;
 import y.utils.Config;
 import y.utils.Utils;
 
@@ -261,8 +262,8 @@ public class PanelCurrents  extends PanelYEM {
 	private synchronized void applyFilters() {
 		if (filtersEnabled && masterDB != null)
 			try {
-				final TimeValue from = new TimeValue((Date) daSpinner.getValue());
-				final TimeValue to = new TimeValue((Date) aSpinner.getValue());
+				final DateTime from = new DateTime((Date) daSpinner.getValue());
+				final DateTime to = new DateTime((Date) aSpinner.getValue());
 				filteredDB = masterDB.filter(from, to);
 				refreshData();
 			}

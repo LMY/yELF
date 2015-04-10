@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
+
 import y.elf.datafunctions.DataFunction;
 import y.utils.Config;
 
@@ -22,7 +24,7 @@ public abstract class MeasurementDb {
 	
 	private DataFunction operationPerformed;
 	private PeriodType periodDivision;
-	protected TimeValue[] periods;
+	protected DateTime[] periods;
 	protected int[] opValues;
 	protected int[] opValueCount;
 	protected int[] opMaxDay;
@@ -82,7 +84,7 @@ public abstract class MeasurementDb {
 	public void clear()
 	{
 		periodDivision = PeriodType.NONE;
-		periods = new TimeValue[0];
+		periods = new DateTime[0];
 		opValues = new int[0];
 		opValid = new boolean[0];
 		opValueCount = new int[0];
@@ -96,8 +98,8 @@ public abstract class MeasurementDb {
 	}
 	
 	
-	public abstract TimeValue getStartDate();
-	public abstract TimeValue getEndDate();
+	public abstract DateTime getStartDate();
+	public abstract DateTime getEndDate();
 	
 	
 	public void perform(PeriodType period, DataFunction function)
@@ -161,12 +163,12 @@ public abstract class MeasurementDb {
 	
 	private <T extends MeasurementValue> List<List<T>> cutDo(Collection<T> values, int cutType)
 	{
-		final Map<TimeValue, List<T>> map = new HashMap<TimeValue, List<T>>();
+		final Map<DateTime, List<T>> map = new HashMap<DateTime, List<T>>();
 		
 		for (T v: values) {
-			final TimeValue time = v.getTime();
-			final TimeValue keytime = new TimeValue(time.getY(), cutType >= 1 ? time.getM() : 0, cutType >= 2 ? time.getD() : 0,
-																 cutType >= 3 ? time.getH() : 0, cutType >= 4 ? time.getMm() : 0);
+			final DateTime time = v.getTime();
+			final DateTime keytime = new DateTime(time.year().get(), cutType >= 1 ? time.monthOfYear().get() : 0, cutType >= 2 ? time.dayOfMonth().get() : 0,
+																 cutType >= 3 ? time.hourOfDay().get() : 0, cutType >= 4 ? time.minuteOfHour().get() : 0);
 			
 			List<T> day = map.get(keytime);
 			if (day == null) {
@@ -178,12 +180,12 @@ public abstract class MeasurementDb {
 		}
 		
 		// sorted periods
-		periods = map.keySet().toArray(new TimeValue[map.keySet().size()]);
+		periods = map.keySet().toArray(new DateTime[map.keySet().size()]);
 		Arrays.sort(periods);
 		
 		// map to list
 		final List<List<T>> ret = new ArrayList<List<T>>();
-		for (TimeValue t : periods) {
+		for (DateTime t : periods) {
 			final List<T> d = map.get(t);
 			Collections.sort(d);
 			ret.add(d);
@@ -199,10 +201,6 @@ public abstract class MeasurementDb {
 
 	public DataFunction getOperationPerformed() {
 		return operationPerformed;
-	}
-
-	public TimeValue[] getDays() {
-		return periods;
 	}
 
 	public int[] getOpValues() {
@@ -225,7 +223,7 @@ public abstract class MeasurementDb {
 		return maxidx;
 	}
 
-	public TimeValue[] getPeriods() {
+	public DateTime[] getPeriods() {
 		return periods;
 	}
 }

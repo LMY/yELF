@@ -48,10 +48,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 
+import org.joda.time.DateTime;
+
 import y.elf.CurrentElfDb;
 import y.elf.CurrentValue;
 import y.elf.ElfValue;
-import y.elf.TimeValue;
 import y.utils.Config;
 import y.utils.Utils;
 
@@ -104,7 +105,7 @@ public class XLSHelper
 		    	
 		    	cell = row.createCell(0);
 			    cell.setCellStyle(dateStyle1);
-			    cell.setCellValue(dayvalues[i][0].getTime().toDateString());
+			    cell.setCellValue(Utils.toDateString(dayvalues[i][0].getTime()));
 			    
 			    cell = row.createCell(1);
 			    cell.setCellStyle(doubleFormat1);
@@ -122,7 +123,7 @@ public class XLSHelper
 		    row = sheet.createRow(rown++);
 		    row = sheet.createRow(rown++);
 		    cell = row.createCell(0);
-		    cell.setCellValue(Config.getResource("TitleMaxM")+" ("+dayvalues[maxi][0].getTime().toDateString()+")");
+		    cell.setCellValue(Config.getResource("TitleMaxM")+" ("+Utils.toDateString(dayvalues[maxi][0].getTime())+")");
 		    
 		    cell = row.createCell(1);
 		    cell.setCellStyle(doubleFormat1);
@@ -171,12 +172,12 @@ public class XLSHelper
 
 		    	for (int k=0; k<day.length; k++) {
 		    		final ElfValue value = day[k];
-		    		final TimeValue time = value.getTime();
+		    		final DateTime time = value.getTime();
 		    		
 		    		row = sheetdata.createRow(rown++);
 		    		cell = row.createCell(0);
 		    		cell.setCellStyle(dateTimeStyle2);
-		    		cell.setCellValue(time.toDateTimeString());
+		    		cell.setCellValue(Utils.toDateString(time));
 		    		
 		    		cell = row.createCell(1);
 		    		cell.setCellStyle(doubleFormat2);
@@ -334,11 +335,11 @@ public class XLSHelper
 		    }
 		    else {
 			    Cell cell = row.createCell(columnnn++);
-			    cell.setCellValue(c.getTime().toDateString());	// data corrente
+			    cell.setCellValue(Utils.toDateString(c.getTime()));	// data corrente
 			    cell.setCellStyle(dateStyle1);
 			    cell = row.createCell(columnnn++);
 			    cell.setCellStyle(timeStyle1);
-			    cell.setCellValue(c.getTime().toTimeString());	// ora corrente
+			    cell.setCellValue(Utils.toTimeString(c.getTime()));	// ora corrente
 			    cell = row.createCell(columnnn++);
 			    cell.setCellStyle(doubleFormat1);
 			    cell.setCellValue(ElfValue.valueIntToDouble(c.getValue()));
@@ -355,10 +356,10 @@ public class XLSHelper
 		    else {
 			    Cell cell = row.createCell(columnnn++);
 			    cell.setCellStyle(dateStyle1);
-			    cell.setCellValue(e.getTime().toDateString());	// data corrente
+			    cell.setCellValue(Utils.toDateString(e.getTime()));	// data corrente
 			    cell = row.createCell(columnnn++);
 			    cell.setCellStyle(timeStyle1);
-			    cell.setCellValue(e.getTime().toTimeString());	// ora corrente
+			    cell.setCellValue(Utils.toTimeString(e.getTime()));	// ora corrente
 			    cell = row.createCell(columnnn++);
 			    cell.setCellStyle(doubleFormat1);
 			    cell.setCellValue(ElfValue.valueIntToDouble(e.getValue()));	// ora corrente

@@ -19,13 +19,15 @@
 
 package y.elf;
 
+import org.joda.time.DateTime;
+
 
 public class ElfValue extends MeasurementValue
 {
 	private int max;
 	private boolean valid;
 
-	public ElfValue(TimeValue time, int value, int max, boolean valid)
+	public ElfValue(DateTime time, int value, int max, boolean valid)
 	{
 		super(time, value);
 		this.max = max;
@@ -49,6 +51,6 @@ public class ElfValue extends MeasurementValue
 	}
 	
 	public ElfValue shift(int dt) {
-		return new ElfValue(getTime().shift(dt), getValue(), max, valid);
+		return new ElfValue(getTime().plusMinutes(dt), getValue(), max, valid);
 	}
 }

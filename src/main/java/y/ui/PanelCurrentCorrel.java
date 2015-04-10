@@ -19,8 +19,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.joda.time.DateTime;
+
 import y.elf.CurrentElfDb;
-import y.elf.TimeValue;
 import y.graphs.XLSHelper;
 import y.utils.Config;
 import y.utils.Utils;
@@ -213,8 +214,8 @@ public class PanelCurrentCorrel extends PanelYEM
 		if (!filtersEnabled)
 			return;
 		
-		final TimeValue from = new TimeValue((Date) daSpinner.getValue());
-		final TimeValue to = new TimeValue((Date) aSpinner.getValue());
+		final DateTime from = new DateTime((Date) daSpinner.getValue());
+		final DateTime to = new DateTime((Date) aSpinner.getValue());
 		final int dt = getDtShift();
 		
 		filteredDB = masterDB.cut(from, to, dt);
@@ -273,8 +274,8 @@ public class PanelCurrentCorrel extends PanelYEM
 			int bestShift = -maxShift;
 			double bestCorr = -1;
 			
-			final TimeValue from = new TimeValue((Date) daSpinner.getValue());
-			final TimeValue to = new TimeValue((Date) aSpinner.getValue());
+			final DateTime from = new DateTime((Date) daSpinner.getValue());
+			final DateTime to = new DateTime((Date) aSpinner.getValue());
 			
 			for (int actShift = -maxShift; actShift <= maxShift; actShift++) {
 				CurrentElfDb db = masterDB.cut(from, to, actShift);

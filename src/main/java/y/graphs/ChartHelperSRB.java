@@ -26,9 +26,7 @@ import java.awt.Stroke;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -45,22 +43,22 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.VerticalAlignment;
 import org.jfree.util.ShapeUtilities;
+import org.joda.time.DateTime;
 
 import y.elf.ElfValue;
-import y.elf.TimeValue;
 import y.utils.Config;
 import y.utils.ConfigSerie;
 import y.utils.Utils;
 
 public class ChartHelperSRB
 {
-	public static JFreeChart getGraph(ElfValue[][] dayvalues, int[] mediane, boolean[] medianevalide, int med_max, TimeValue from, TimeValue to, Config config, ArrayList<ConfigSerie> series)
+	public static JFreeChart getGraph(ElfValue[][] dayvalues, int[] mediane, boolean[] medianevalide, int med_max, DateTime from, DateTime to, Config config, ArrayList<ConfigSerie> series)
 	{
         final TimeSeriesCollection dataset = createDataset(dayvalues, mediane, medianevalide, med_max, config, series);
         return createChart(dataset, from.toDate(), to.toDate(), config, series);
 	}
 	
-	public static boolean saveData(String filename, ElfValue[][] dayvalues, int[] mediane, boolean[] medianevalide, int med_max, TimeValue from, TimeValue to, Config config, ArrayList<ConfigSerie> series)
+	public static boolean saveData(String filename, ElfValue[][] dayvalues, int[] mediane, boolean[] medianevalide, int med_max, DateTime from, DateTime to, Config config, ArrayList<ConfigSerie> series)
 	{
 		if (Utils.abortOnExistingAndDontOverwrite(filename))
 			return false;
@@ -75,17 +73,14 @@ public class ChartHelperSRB
         for (int i=0; i<aserie.length; i++)
         	aserie[i] = new TimeSeries(series.get(i).getName());
 
-        final Calendar c = Calendar.getInstance();
-        
         for (int d=0; d<dayvalues.length; d++) {
         	final ElfValue[] day = dayvalues[d];
         	
         	for (int i=0; i<day.length; i++) {
         		final ElfValue value = day[i];
-        		final TimeValue time = value.getTime();
+        		final DateTime time = value.getTime();
         		
-        		c.set(time.getY(), time.getM() - 1, time.getD(), time.getH(), time.getMm());
-        		final RegularTimePeriod date = new Minute(c.getTime());
+        		final RegularTimePeriod date = new Minute(time.toDate());
         		
         		if (value.isValid())
         			for (int aix=0; aix<aserie.length; aix++)

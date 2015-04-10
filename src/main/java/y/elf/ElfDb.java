@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import y.elf.datafunctions.DataFunction;
 
 public class ElfDb extends MeasurementDb
@@ -42,25 +44,25 @@ public class ElfDb extends MeasurementDb
 	
 
 	@Override
-	public TimeValue getStartDate() {
+	public DateTime getStartDate() {
 		try {
 			if (rawData != null)
 				return rawData.get(0).getTime();
 			else
 				return sampledData[0][0].getTime();
 		}
-		catch (Exception e) { return new TimeValue(2000, 1, 1, 0, 0); }
+		catch (Exception e) { return new DateTime(2000, 1, 1, 0, 0); }
 	}
 	
 	@Override
-	public TimeValue getEndDate() {
+	public DateTime getEndDate() {
 		try {
 			if (rawData != null)
 				return rawData.get(rawData.size()-1).getTime();
 			else
 				return sampledData[sampledData.length-1][sampledData[sampledData.length-1].length-1].getTime();
 		}
-		catch (Exception e) { return new TimeValue(2999, 12, 12, 23, 59); }
+		catch (Exception e) { return new DateTime(2999, 12, 12, 23, 59); }
 	}
 	
 	@Override
@@ -148,13 +150,13 @@ public class ElfDb extends MeasurementDb
 		perform(getPeriodDivision(), getOperationPerformed());
 	}
 	
-	public ElfDb filter(TimeValue from, TimeValue to) //, MeasurementDb.OperationType operationType)
+	public ElfDb filter(DateTime from, DateTime to) //, MeasurementDb.OperationType operationType)
 	{
 		List<ElfValue> newvalues = new ArrayList<ElfValue>();
 
 		for (int i=0, imax=rawData.size(); i<imax; i++) {
 			final ElfValue value = rawData.get(i);
-			final TimeValue day = value.getTime(); //.getDate(); bugfix: 2.1.6
+			final DateTime day = value.getTime(); //.getDate(); bugfix: 2.1.6
 
 			if (day.compareTo(from) >= 0 && day.compareTo(to) <= 0)	// is between [from,to]
 				newvalues.add(value);

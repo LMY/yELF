@@ -19,8 +19,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
+import org.joda.time.DateTime;
+
 import y.elf.ElfDb;
-import y.elf.TimeValue;
 import y.elf.MeasurementDb.PeriodType;
 import y.graphs.ChartHelperELF;
 import y.graphs.XLSHelper;
@@ -195,8 +196,8 @@ public class PanelELF extends PanelYEM
 	{
 		if (masterValues != null)
 			try {
-				final TimeValue from = new TimeValue((Date) daSpinner.getValue());
-				final TimeValue to = new TimeValue((Date) aSpinner.getValue());
+				final DateTime from = new DateTime((Date) daSpinner.getValue());
+				final DateTime to = new DateTime((Date) aSpinner.getValue());
 				filteredValues = masterValues.filter(from, to);
 				refreshTable();
 			}
@@ -210,7 +211,7 @@ public class PanelELF extends PanelYEM
 	    
 	    public TableModel(ElfDb db)
 	    {
-	    	final TimeValue[] times = db.getDays();
+	    	final DateTime[] times = db.getPeriods();
 	    	final int[] mediane = db.getOpValues();
 	    	final int[] maxs = db.getOpMaxDay();
 	    	final int[] count = db.getOpValueCount();
@@ -219,7 +220,7 @@ public class PanelELF extends PanelYEM
 	    	
 	    	for (int i=0; i<times.length; i++) {
 	    		data[i] = new Object[4];
-	    		data[i][0] = times[i].toDateString();
+	    		data[i][0] = Utils.toDateString(times[i]);
 	    		data[i][1] = ((double)mediane[i]/100);
 	    		data[i][2] = ((double)maxs[i]/100);
 	    		data[i][3] = count[i];
@@ -227,7 +228,7 @@ public class PanelELF extends PanelYEM
 	    	
 	    	final int maxi = db.getMaxidx();
 	    	data[data.length-1] = new Object[4];
-	    	data[data.length-1][0] = Config.getResource("MsgMax")+"("+times[maxi].toDateString()+")";
+	    	data[data.length-1][0] = Config.getResource("MsgMax")+"("+Utils.toDateString(times[maxi])+")";
     		data[data.length-1][1] = ((double)mediane[maxi]/100);
     		data[data.length-1][2] = ((double)maxs[maxi]/100);
     		data[data.length-1][3] = count[maxi];
@@ -279,8 +280,8 @@ public class PanelELF extends PanelYEM
 		if (!path.contains("."))
 			path += ".png";
 		
-		final TimeValue from = new TimeValue((Date) daSpinner.getValue());
-		final TimeValue to = new TimeValue((Date) aSpinner.getValue());
+		final DateTime from = new DateTime((Date) daSpinner.getValue());
+		final DateTime to = new DateTime((Date) aSpinner.getValue());
 	
 		return ChartHelperELF.saveData(path, filteredValues.getSampledData(), filteredValues.getOpValues(), filteredValues.getOpValid(), filteredValues.getMaxidx(), from, to,
 				Config.getInstance(), Config.getInstance().getConst_values().get("elf"));

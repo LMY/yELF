@@ -29,6 +29,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.joda.time.DateTime;
+import org.joda.time.MutableDateTime;
+
 public class DbReader {
 
 	public final static String DEFAULT_CSV_SEPARATOR = ";";
@@ -97,7 +100,7 @@ public class DbReader {
 					final String[] date = parts[0].split(separatorDate);
 					final String[] hour = parts[1].split(separatorTime);
 					
-					TimeValue time = new TimeValue(Integer.parseInt(date[2]), Integer.parseInt(date[1]), Integer.parseInt(date[0]),
+					DateTime time = new DateTime(Integer.parseInt(date[2]), Integer.parseInt(date[1]), Integer.parseInt(date[0]),
 							Integer.parseInt(hour[0]), Integer.parseInt(hour[1]) );
 					
 					boolean valid;
@@ -141,8 +144,8 @@ public class DbReader {
 		try {
 			reader = new BufferedReader(new FileReader(filename));
 			String line;
-			TimeValue lasttime = new TimeValue(0, 0, 0, 0, 0);
-			final TimeValue invalidtime = new TimeValue(0, 0, 0, 0, 0);
+			MutableDateTime lasttime = new MutableDateTime(0, 0, 0, 0, 0, 0, 0);
+			final MutableDateTime invalidtime = new MutableDateTime(0, 0, 0, 0, 0, 0, 0);
 			
 			while ((line=reader.readLine()) != null) {
 				if (line.isEmpty())
@@ -160,14 +163,14 @@ public class DbReader {
 						else if (parts[i].contains(separatorDate)) {
 							final String[] date = parts[i].split(separatorDate); 
 							
-							lasttime.setD(Integer.parseInt(date[0]));
-							lasttime.setM(Integer.parseInt(date[1]));
-							lasttime.setY(Integer.parseInt(date[2]));
+							lasttime.setDayOfMonth(Integer.parseInt(date[0]));
+							lasttime.setMonthOfYear(Integer.parseInt(date[1]));
+							lasttime.setYear(Integer.parseInt(date[2]));
 						}
 						else if (parts[i].contains(separatorTime)) {
 							final String[] hour = parts[i].split(separatorTime);
-							lasttime.setH(Integer.parseInt(hour[0]));
-							lasttime.setMm(Integer.parseInt(hour[1]));
+							lasttime.setHourOfDay(Integer.parseInt(hour[0]));
+							lasttime.setMinuteOfHour(Integer.parseInt(hour[1]));
 						}
 						else if (value == UNUSED)
 							value = translateValue(parts[i], defaultvalue);
@@ -178,14 +181,16 @@ public class DbReader {
 					if (lasttime.equals(invalidtime))	// invalid line (header)
 						continue;
 					
+					final DateTime currentdatetime = lasttime.toDateTime();
+					
 					if (value > 0) {
 						if (fieldnn == 2)
-							list.add(new ElfValue(lasttime, maxvalue, value, valid));
+							list.add(new ElfValue(currentdatetime, maxvalue, value, valid));
 						else
-							list.add(new ElfValue(lasttime, value, maxvalue, valid));
+							list.add(new ElfValue(currentdatetime, value, maxvalue, valid));
 					}
 					else
-						list.add(new ElfValue(lasttime, 0, 0, false));
+						list.add(new ElfValue(currentdatetime, 0, 0, false));
 				}
 				catch (Exception e) { continue; } // on error, skip line
 			}
@@ -269,7 +274,7 @@ public class DbReader {
 						dateformat = dd > 31 ? CurrrentDateFormat.YYYYMMDD : CurrrentDateFormat.DDMMYYYY;
 					}
 					
-					TimeValue time = new TimeValue(Integer.parseInt(date[dateformat == CurrrentDateFormat.YYYYMMDD ? 2 : 0]),
+					DateTime time = new DateTime(Integer.parseInt(date[dateformat == CurrrentDateFormat.YYYYMMDD ? 2 : 0]),
 							Integer.parseInt(date[1]),
 							Integer.parseInt(date[dateformat == CurrrentDateFormat.YYYYMMDD ? 0 : 2]),
 							Integer.parseInt(hour[0]), Integer.parseInt(hour[1]) );

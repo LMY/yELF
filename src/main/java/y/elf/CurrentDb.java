@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import y.elf.datafunctions.DataFunction;
 import y.utils.Config;
 
@@ -25,25 +27,25 @@ public class CurrentDb extends MeasurementDb {
 	}
 	
 	@Override
-	public TimeValue getStartDate() {
+	public DateTime getStartDate() {
 		try {
 			if (rawData != null)
 				return rawData.get(0).getTime();
 			else
 				return sampledData[0][0].getTime();
 		}
-		catch (Exception e) { return new TimeValue(2000, 1, 1, 0, 0); }
+		catch (Exception e) { return new DateTime(2000, 1, 1, 0, 0); }
 	}
 	
 	@Override
-	public TimeValue getEndDate() {
+	public DateTime getEndDate() {
 		try {
 			if (rawData != null)
 				return rawData.get(rawData.size()-1).getTime();
 			else
 				return sampledData[sampledData.length-1][sampledData[sampledData.length-1].length-1].getTime();
 		}
-		catch (Exception e) { return new TimeValue(2999, 12, 12, 23, 59); }
+		catch (Exception e) { return new DateTime(2999, 12, 12, 23, 59); }
 	}
 
 	@Override
@@ -107,12 +109,12 @@ public class CurrentDb extends MeasurementDb {
 		sampledData = new CurrentValue[0][0];
 	}
 
-	public CurrentDb filter(TimeValue from, TimeValue to) {
+	public CurrentDb filter(DateTime from, DateTime to) {
 		List<CurrentValue> newvalues = new ArrayList<CurrentValue>();
 
 		for (int i=0, imax=rawData.size(); i<imax; i++) {
 			final CurrentValue value = rawData.get(i);
-			final TimeValue day = value.getTime(); //.getDate(); bugfix: 2.1.6
+			final DateTime day = value.getTime(); //.getDate(); bugfix: 2.1.6
 
 			if (day.compareTo(from) >= 0 && day.compareTo(to) <= 0)	// is between [from,to]
 				newvalues.add(value);

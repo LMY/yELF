@@ -33,6 +33,10 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 
 
 public class Utils
@@ -232,5 +236,25 @@ public class Utils
 	{
 		return (new File(filename).exists() && Utils.MessageBoxYesNo(null, filename+" "+"MsgOverwrite", "TitleOverwrite") == false);
 	}
+	
+	
+	private static DateTimeFormatter dateFormatterDate = DateTimeFormat.forPattern("dd/MM/yyyy");
+	private static DateTimeFormatter dateFormatterTime = DateTimeFormat.forPattern("HH:mm");
+	private static DateTimeFormatter dateFormatterDateTime = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+	
+	public static String toDateString(DateTime time)
+	{
+		return dateFormatterDate.print(time);
+	}
+	
+	public static String toTimeString(DateTime time)
+	{
+		return dateFormatterTime.print(time);
+	}
+	
+	public static String toDateTimeString(DateTime time)
+	{
+		return dateFormatterDateTime.print(time);
+	}	
 }
 
