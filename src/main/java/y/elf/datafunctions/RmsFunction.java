@@ -1,11 +1,11 @@
 package y.elf.datafunctions;
 
 public class RmsFunction extends DataFunction {
-	public static String NAME = "RMS";
+	public static String KEY = "DataFunctionRms";
 	
 	@Override
-	public String getName() {
-		return NAME;
+	public String getKey() {
+		return KEY;
 	}
 	
 	@Override

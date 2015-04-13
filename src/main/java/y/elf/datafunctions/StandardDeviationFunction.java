@@ -1,11 +1,11 @@
 package y.elf.datafunctions;
 
 public class StandardDeviationFunction extends DataFunction {
-	public static String NAME = "STANDARD DEVIATION";
+	public static String KEY = "DataFunctionStandardDeviation";
 	
 	@Override
-	public String getName() {
-		return NAME;
+	public String getKey() {
+		return KEY;
 	}
 	
 	@Override

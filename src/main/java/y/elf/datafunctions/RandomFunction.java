@@ -3,11 +3,11 @@ package y.elf.datafunctions;
 import java.util.Random;
 
 public class RandomFunction extends DataFunction {
-	public static String NAME = "RANDOM";
+	public static String KEY = "DataFunctionRandom";
 	
 	@Override
-	public String getName() {
-		return NAME;
+	public String getKey() {
+		return KEY;
 	}
 	
 	private Random random;

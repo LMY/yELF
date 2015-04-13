@@ -8,14 +8,13 @@ import org.joda.time.DateTime;
 
 import y.elf.MeasurementValue;
 
-public class FilterFunctionRemoveDuplicates implements FilterFunction {
-	public static final String NAME = "Remove duplicates";
+public class FilterFunctionRemoveDuplicates extends FilterFunction {
+	public static final String KEY = "FilterFunctionRemoveDuplicates";
 	
 	@Override
-	public String getName() {
-		return NAME;
+	public String getKey() {
+		return KEY;
 	}
-	
 	
 	@Override
 	public <T extends MeasurementValue> void filter(List<T> rawData) {

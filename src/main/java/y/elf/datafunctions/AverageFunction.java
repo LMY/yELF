@@ -1,11 +1,11 @@
 package y.elf.datafunctions;
 
 public class AverageFunction extends DataFunction {
-	public static String NAME = "AVERAGE";
+	public static String KEY = "DataFunctionAverage";
 	
 	@Override
-	public String getName() {
-		return NAME;
+	public String getKey() {
+		return KEY;
 	}
 	
 	@Override

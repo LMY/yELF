@@ -1,11 +1,11 @@
 package y.elf.datafunctions;
 
 public class CountFunction extends DataFunction {
-	public static String NAME = "COUNT";
+	public static String KEY = "DataFunctionCount";
 	
 	@Override
-	public String getName() {
-		return NAME;
+	public String getKey() {
+		return KEY;
 	}
 	
 	@Override

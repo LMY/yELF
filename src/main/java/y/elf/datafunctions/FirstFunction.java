@@ -1,11 +1,11 @@
 package y.elf.datafunctions;
 
 public class FirstFunction extends DataFunction {
-	public static String NAME = "FIRST";
+	public static String KEY = "DataFunctionFirst";
 	
 	@Override
-	public String getName() {
-		return NAME;
+	public String getKey() {
+		return KEY;
 	}
 	
 	@Override

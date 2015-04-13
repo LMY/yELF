@@ -1,11 +1,11 @@
 package y.elf.datafunctions;
 
 public class MinFunction extends DataFunction {
-	public static String NAME = "MIN";
+	public static String KEY = "DataFunctionMin";
 	
 	@Override
-	public String getName() {
-		return NAME;
+	public String getKey() {
+		return KEY;
 	}
 
 	@Override

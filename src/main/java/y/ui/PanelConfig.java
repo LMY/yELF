@@ -628,12 +628,12 @@ public class PanelConfig extends JPanel
 		try { conf.setInstrumentLowSRB(ElfValue.valueStringToInt(instrumentLowSRB.getText())); } catch (Exception e) {}
 		try { conf.setCurrentLowCut(ElfValue.valueStringToInt(instrumentLowCurrent.getText())); } catch (Exception e) {}
 
-		conf.setOperationELF(DataFunction.create((String)comboOpELF.getSelectedItem()));
-		conf.setOperationSRB(DataFunction.create((String)comboOpSRB.getSelectedItem()));
+		conf.setOperationELF(DataFunction.createFromName((String)comboOpELF.getSelectedItem()));
+		conf.setOperationSRB(DataFunction.createFromName((String)comboOpSRB.getSelectedItem()));
 		
-		conf.setFilterELF(FilterFunction.create((String)comboFilterELF.getSelectedItem()));
-		conf.setFilterSRB(FilterFunction.create((String)comboFilterSRB.getSelectedItem()));
-		conf.setFilterCurrent(FilterFunction.create((String)comboFilterCurrent.getSelectedItem()));
+		conf.setFilterELF(FilterFunction.createFromName((String)comboFilterELF.getSelectedItem()));
+		conf.setFilterSRB(FilterFunction.createFromName((String)comboFilterSRB.getSelectedItem()));
+		conf.setFilterCurrent(FilterFunction.createFromName((String)comboFilterCurrent.getSelectedItem()));
 		
 		conf.setAxisFormat(axisFormat.getText());
 		

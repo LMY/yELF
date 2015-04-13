@@ -327,12 +327,12 @@ public class Config
 			bf.write("instrumentLowSRB: " + instrumentLowSRB + "\n");
 			bf.write("currentLowCut: " + currentLowCut + "\n");
 			
-			bf.write("operationELF: " + operationELF.getName() + "\n");
-			bf.write("operationSRB: " + operationSRB.getName() + "\n");
+			bf.write("operationELF: " + operationELF.getKey() + "\n");
+			bf.write("operationSRB: " + operationSRB.getKey() + "\n");
 			
-			bf.write("filterELF: " + filterELF.getName() + "\n");
-			bf.write("filterSRB: " + filterSRB.getName() + "\n");
-			bf.write("filterCurrent: " + filterCurrent.getName() + "\n");
+			bf.write("filterELF: " + filterELF.getKey() + "\n");
+			bf.write("filterSRB: " + filterSRB.getKey() + "\n");
+			bf.write("filterCurrent: " + filterCurrent.getKey() + "\n");
 			
 			if (forceYmin != 0 && forceYmax != 0) {
 				bf.write("forceYmin: " + forceYmin + "\n");

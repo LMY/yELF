@@ -2,11 +2,11 @@
 package y.elf.datafunctions;
 
 public class MaxFunction extends DataFunction {
-	public static String NAME = "MAX";
+	public static String KEY = "DataFunctionMax";
 	
 	@Override
-	public String getName() {
-		return NAME;
+	public String getKey() {
+		return KEY;
 	}
 	
 	@Override

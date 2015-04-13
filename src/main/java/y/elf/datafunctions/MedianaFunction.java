@@ -3,11 +3,11 @@ package y.elf.datafunctions;
 import java.util.Arrays;
 
 public class MedianaFunction extends DataFunction {
-	public static String NAME = "MEDIAN";
+	public static String KEY = "DataFunctionMedian";
 	
 	@Override
-	public String getName() {
-		return NAME;
+	public String getKey() {
+		return KEY;
 	}
 	
 	@Override

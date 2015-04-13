@@ -7,14 +7,13 @@ import org.joda.time.DateTimeZone;
 
 import y.elf.MeasurementValue;
 
-public class FilterFunctionConvertToUTC implements FilterFunction {
-	public static final String NAME = "Convert to UTC";
+public class FilterFunctionConvertToUTC extends FilterFunction {
+	public static final String KEY = "FilterFunctionConvertToUTC";
 	
 	@Override
-	public String getName() {
-		return NAME;
+	public String getKey() {
+		return KEY;
 	}
-	
 	
 	@Override
 	public <T extends MeasurementValue> void filter(List<T> rawData) {

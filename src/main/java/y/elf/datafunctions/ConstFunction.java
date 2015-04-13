@@ -1,11 +1,11 @@
 package y.elf.datafunctions;
 
 public class ConstFunction extends DataFunction {
-	public static String NAME = "CONST";
+	public static String KEY = "DataFunctionConst";
 	
 	@Override
-	public String getName() {
-		return NAME+" "+value;
+	public String getKey() {
+		return KEY+" "+value;
 	}
 	
 	private double value;
