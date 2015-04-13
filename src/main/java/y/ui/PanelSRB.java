@@ -164,9 +164,10 @@ public class PanelSRB extends PanelYEM
 	
 	public void go()
 	{
-		final int valuefieldn = Config.getInstance().getSrbValuefieldn();
-		final int low = Config.getInstance().getInstrumentLowSRB();
-		final ElfDb newdb = ElfDb.load(filelist.getFilenames(), valuefieldn, low);
+		final Config config = Config.getInstance();
+		final int valuefieldn = config.getSrbValuefieldn();
+		final int low = config.getInstrumentLowSRB();
+		final ElfDb newdb = ElfDb.load(filelist.getFilenames(), valuefieldn, low, config.getFilterSRB());
 		newdb.perform(PeriodType.DAILY, Config.getInstance().getOperationSRB());
 		newdb.clearRaw();	// resample won't be needed after perform()
 		

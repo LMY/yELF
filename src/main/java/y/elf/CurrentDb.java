@@ -7,6 +7,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import y.elf.datafunctions.DataFunction;
+import y.elf.filterfunctions.FilterFunction;
 import y.utils.Config;
 
 
@@ -14,7 +15,7 @@ public class CurrentDb extends MeasurementDb {
 
 	public static CurrentDb load(String[] filenames, int fieldn, Config config) {
 		final CurrentDb db = new CurrentDb();
-		db.add(filenames, fieldn, -1);
+		db.add(filenames, fieldn, -1, config.getFilterCurrent());
 		return db.filterLowCut(config);
 	}
 	
@@ -49,7 +50,7 @@ public class CurrentDb extends MeasurementDb {
 	}
 
 	@Override
-	public boolean add(String filename, int valuefieldn, int low) {
+	protected boolean add(String filename, int valuefieldn, int low) {
 		final List<CurrentValue> unfiltered = DbReader.readCurrentFile(filename, valuefieldn, low);
 		if (unfiltered == null)
 			return false;
@@ -75,6 +76,11 @@ public class CurrentDb extends MeasurementDb {
 			sampledData[i] = sampledList.get(i).toArray(new CurrentValue[sampledList.get(i).size()]);
 	}
 
+	@Override
+	public void applyFilter(FilterFunction filter) {
+		filter.filter(rawData);
+	}
+	
 	@Override
 	protected void calculate(DataFunction function) {
 		opValues = new int[periods.length];

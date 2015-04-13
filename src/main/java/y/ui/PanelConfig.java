@@ -36,7 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -48,6 +48,7 @@ import say.swing.JFontChooser;
 import y.elf.CurrentValue;
 import y.elf.ElfValue;
 import y.elf.datafunctions.DataFunction;
+import y.elf.filterfunctions.FilterFunction;
 import y.utils.ColorEditor;
 import y.utils.Config;
 import y.utils.ConfigSerie;
@@ -66,6 +67,10 @@ public class PanelConfig extends JPanel
 		Utils.centerWindow(newform);
 		newform.setVisible(true);
 	}
+	
+	
+	private JTabbedPane tabs;
+	
 	
 	private JComboBox<String> comboLanguage;
 	
@@ -99,23 +104,45 @@ public class PanelConfig extends JPanel
 	private JComboBox<String> comboOpSRB;
 	private JComboBox<String> comboOpELF;
 	
+	private JComboBox<String> comboFilterSRB;
+	private JComboBox<String> comboFilterELF;
+	private JComboBox<String> comboFilterCurrent;
 	
 	private String[] configColumnNames;
 	private final String[] avaibleLanguages = { "Italiano", "English" };
+	
 	
 	public PanelConfig()
 	{
 		super();
 		
+		tabs = new JTabbedPane();
+		JPanel generalTab = new JPanel();
+		JPanel elfTab = new JPanel();
+		JPanel srbTab = new JPanel();
+		JPanel currentTab = new JPanel();
+		
+		tabs.add(generalTab, Config.getResource("TitleConfigTabGeneral"));
+		tabs.add(elfTab, Config.getResource("TitleConfigTabElf"));
+		tabs.add(srbTab, Config.getResource("TitleConfigTabSrb"));
+		tabs.add(currentTab, Config.getResource("TitleConfigTabCurrent"));
+		
+		this.setLayout(new BorderLayout());
+		this.add(tabs, BorderLayout.CENTER);
+		
+		
 		configColumnNames = Config.getInstance().getConfigColumnNames();
 		
-		JPanel mainpanel = new JPanel();
-		mainpanel.setLayout(new GridLayout(0, 2));
+		generalTab.setLayout(new GridLayout(0, 2));
 		
 		comboLanguage = new JComboBox<String>(avaibleLanguages);
 		
 		comboOpSRB = new JComboBox<String>(DataFunction.getNames());
 		comboOpELF = new JComboBox<String>(DataFunction.getNames());
+		
+		comboFilterSRB = new JComboBox<String>(FilterFunction.getNames());
+		comboFilterELF = new JComboBox<String>(FilterFunction.getNames());
+		comboFilterCurrent = new JComboBox<String>(FilterFunction.getNames());
 		
 		buttonSave = new JButton(Config.getResource("TitleSave"));
 		buttonReload = new JButton(Config.getResource("TitleReload"));
@@ -191,36 +218,33 @@ public class PanelConfig extends JPanel
 		setColumnAsConfigSerieUsages(srbSeries, 2);
 		setColumnAsConfigSerieUsages(emSeries, 2);
 		
-		mainpanel.add(new JLabel(" "+Config.getResource("TitleLanguage")));
-		mainpanel.add(comboLanguage);
+		generalTab.add(new JLabel(" "+Config.getResource("TitleLanguage")));
+		generalTab.add(comboLanguage);
 		
-		mainpanel.add(new JLabel(" "+Config.getResource("TitleMinDataCoverage")));
-		mainpanel.add(minDataCoverage100);
+		generalTab.add(new JLabel(" "+Config.getResource("TitleMinDataCoverage")));
+		generalTab.add(minDataCoverage100);
 		
-		mainpanel.add(new JLabel(" "+Config.getResource("TitlePicWidth")));
-		mainpanel.add(pictureWidth);
-		mainpanel.add(new JLabel(" "+Config.getResource("TitlePicHeight")));
-		mainpanel.add(pictureHeight);
+		generalTab.add(new JLabel(" "+Config.getResource("TitlePicWidth")));
+		generalTab.add(pictureWidth);
+		generalTab.add(new JLabel(" "+Config.getResource("TitlePicHeight")));
+		generalTab.add(pictureHeight);
 		
-		mainpanel.add(new JLabel(" "+Config.getResource("TitleCurrentFieldn")));
-		mainpanel.add(currentValueFieldn);
+		generalTab.add(new JLabel(" "+Config.getResource("TitleYrangeMin")));
+		generalTab.add(graphYmin);
+		generalTab.add(new JLabel(" "+Config.getResource("TitleYrangeMax")));
+		generalTab.add(graphYmax);
 		
-		mainpanel.add(new JLabel(" "+Config.getResource("TitleYrangeMin")));
-		mainpanel.add(graphYmin);
-		mainpanel.add(new JLabel(" "+Config.getResource("TitleYrangeMax")));
-		mainpanel.add(graphYmax);
+		generalTab.add(new JLabel(" "+Config.getResource("TitleLegendSize")));
+		generalTab.add(legendSize);
+		generalTab.add(new JLabel(" "+Config.getResource("TitleLegendX")));
+		generalTab.add(legendX);
+		generalTab.add(new JLabel(" "+Config.getResource("TitleLegendY")));
+		generalTab.add(legendY);
 		
-		mainpanel.add(new JLabel(" "+Config.getResource("TitleLegendSize")));
-		mainpanel.add(legendSize);
-		mainpanel.add(new JLabel(" "+Config.getResource("TitleLegendX")));
-		mainpanel.add(legendX);
-		mainpanel.add(new JLabel(" "+Config.getResource("TitleLegendY")));
-		mainpanel.add(legendY);
+		generalTab.add(new JLabel(" "+Config.getResource("TitleInstrumentalLowCurrent")));
+		generalTab.add(instrumentLowCurrent);
 		
-		mainpanel.add(new JLabel(" "+Config.getResource("TitleInstrumentalLowCurrent")));
-		mainpanel.add(instrumentLowCurrent);
-		
-		mainpanel.add(new JLabel(" "+Config.getResource("TitleXAxisFormat")));
+		generalTab.add(new JLabel(" "+Config.getResource("TitleXAxisFormat")));
 		
 		JPanel axisPanel = new JPanel();
 		axisPanel.setLayout(new BorderLayout());
@@ -234,20 +258,13 @@ public class PanelConfig extends JPanel
 		
 		axisPanel.add(axisFormat, BorderLayout.CENTER);
 		axisPanel.add(axisButton, BorderLayout.EAST);
-		mainpanel.add(axisPanel);
-		mainpanel.add(new JLabel(" "+Config.getResource("TitleTitleFont")));
-		mainpanel.add(titleFont);
+		generalTab.add(axisPanel);
+		generalTab.add(new JLabel(" "+Config.getResource("TitleTitleFont")));
+		generalTab.add(titleFont);
 		
-		this.setLayout(new BorderLayout());
-		this.add(mainpanel, BorderLayout.NORTH);
-		
-		JPanel tablePanel = new JPanel();
-		tablePanel.setLayout(new GridLayout(0, 2));
-		
-		JPanel t1 = new JPanel();
-		t1.setLayout(new BorderLayout());
-		t1.add(new JScrollPane(srbSeries), BorderLayout.CENTER);
-		t1.setBorder(BorderFactory.createTitledBorder(Config.getResource("TitleSerieSrb")));
+		srbTab.setLayout(new BorderLayout());
+		srbTab.add(srbSeries/*new JScrollPane(srbSeries)*/, BorderLayout.CENTER);
+		srbTab.setBorder(BorderFactory.createTitledBorder(Config.getResource("TitleSerieSrb")));
 		
 		JButton srbBnew = new JButton(Config.getResource("MsgAdd"));
 		srbBnew.addActionListener(new ActionListener() {
@@ -298,7 +315,7 @@ public class PanelConfig extends JPanel
 		t1x.add(srbBdown);
 		t1x.add(srbBdel);
 		t1x.add(srbDefault);
-		t1.add(t1x, BorderLayout.SOUTH);
+		srbTab.add(t1x, BorderLayout.SOUTH);
 		
 		JPanel t1up = new JPanel();
 		t1up.setLayout(new GridLayout(0, 2));
@@ -306,15 +323,16 @@ public class PanelConfig extends JPanel
 		t1up.add(srbValueFieldn);
 		t1up.add(new JLabel(" "+Config.getResource("TitleInstrumentalLowSRB")));
 		t1up.add(instrumentLowSRB);
+		t1up.add(new JLabel(" "+Config.getResource("TitleSRBFilterFunction")));
+		t1up.add(comboFilterSRB);
 		t1up.add(new JLabel(" "+Config.getResource("TitleOperationTypeSRB")));
 		t1up.add(comboOpSRB);
-		t1.add(t1up, BorderLayout.NORTH);
+		srbTab.add(t1up, BorderLayout.NORTH);
 		
 		
-		JPanel t2 = new JPanel();
-		t2.setLayout(new BorderLayout());
-		t2.add(new JScrollPane(emSeries), BorderLayout.CENTER);
-		t2.setBorder(BorderFactory.createTitledBorder(Config.getResource("TitleSerieElf")));
+		elfTab.setLayout(new BorderLayout());
+		elfTab.add(emSeries/*new JScrollPane(emSeries)*/, BorderLayout.CENTER);
+		elfTab.setBorder(BorderFactory.createTitledBorder(Config.getResource("TitleSerieElf")));
 		
 		
 		
@@ -367,7 +385,7 @@ public class PanelConfig extends JPanel
 		t2x.add(elfBdown);
 		t2x.add(elfBdel);
 		t2x.add(elfDefault);
-		t2.add(t2x, BorderLayout.SOUTH);
+		elfTab.add(t2x, BorderLayout.SOUTH);
 		
 		JPanel t2up = new JPanel();
 		t2up.setLayout(new GridLayout(0, 2));
@@ -375,13 +393,21 @@ public class PanelConfig extends JPanel
 		t2up.add(elfValueFieldn);
 		t2up.add(new JLabel(" "+Config.getResource("TitleInstrumentalLowELF")));
 		t2up.add(instrumentLowELF);
+		t2up.add(new JLabel(" "+Config.getResource("TitleELFFilterFunction")));
+		t2up.add(comboFilterELF);
 		t2up.add(new JLabel(" "+Config.getResource("TitleOperationTypeELF")));
 		t2up.add(comboOpELF);
-		t2.add(t2up, BorderLayout.NORTH);
+		elfTab.add(t2up, BorderLayout.NORTH);
 		
-		tablePanel.add(t1);
-		tablePanel.add(t2);
-		this.add(tablePanel, BorderLayout.CENTER);
+		
+		currentTab.setLayout(new GridLayout(0, 2));
+		currentTab.add(new JLabel(" "+Config.getResource("TitleCurrentFieldn")));
+		currentTab.add(currentValueFieldn);
+		currentTab.add(new JLabel(" "+Config.getResource("TitleCurrentFilterFunction")));
+		currentTab.add(comboFilterCurrent);
+
+		
+		
 		
 		JPanel btnPanel = new JPanel();
 		btnPanel.setLayout(new GridLayout(1, 2));
@@ -605,6 +631,10 @@ public class PanelConfig extends JPanel
 		conf.setOperationELF(DataFunction.create((String)comboOpELF.getSelectedItem()));
 		conf.setOperationSRB(DataFunction.create((String)comboOpSRB.getSelectedItem()));
 		
+		conf.setFilterELF(FilterFunction.create((String)comboFilterELF.getSelectedItem()));
+		conf.setFilterSRB(FilterFunction.create((String)comboFilterSRB.getSelectedItem()));
+		conf.setFilterCurrent(FilterFunction.create((String)comboFilterCurrent.getSelectedItem()));
+		
 		conf.setAxisFormat(axisFormat.getText());
 		
 		conf.Save();
@@ -645,6 +675,10 @@ public class PanelConfig extends JPanel
 		
 		comboOpSRB.setSelectedItem(conf.getOperationSRB().getName());
 		comboOpELF.setSelectedItem(conf.getOperationELF().getName());
+		
+		comboFilterSRB.setSelectedItem(conf.getFilterSRB().getName());
+		comboFilterELF.setSelectedItem(conf.getFilterELF().getName());
+		comboFilterCurrent.setSelectedItem(conf.getFilterCurrent().getName());
 		
 		axisFormat.setText(conf.getAxisFormat());
 		

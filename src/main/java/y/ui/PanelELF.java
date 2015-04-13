@@ -164,9 +164,10 @@ public class PanelELF extends PanelYEM
 	
 	public void go()
 	{
-		final int valuefieldn = Config.getInstance().getElfValuefieldn();
-		final int low = Config.getInstance().getInstrumentLowELF();
-		final ElfDb newdb = ElfDb.load(filelist.getFilenames(), valuefieldn, low);
+		final Config config = Config.getInstance();
+		final int valuefieldn = config.getElfValuefieldn();
+		final int low = config.getInstrumentLowELF();
+		final ElfDb newdb = ElfDb.load(filelist.getFilenames(), valuefieldn, low, config.getFilterELF());
 		newdb.perform(PeriodType.DAILY, Config.getInstance().getOperationELF());
 		newdb.clearRaw();	// resample won't be needed after perform()
 

@@ -36,6 +36,9 @@ import y.elf.ElfValue;
 import y.elf.datafunctions.DataFunction;
 import y.elf.datafunctions.MedianaFunction;
 import y.elf.datafunctions.RmsFunction;
+import y.elf.filterfunctions.FilterFunction;
+import y.elf.filterfunctions.FilterFunctionConvertToUTC;
+import y.elf.filterfunctions.FilterFunctionRemoveDuplicates;
 
 public class Config
 {
@@ -89,6 +92,10 @@ public class Config
 	private DataFunction operationSRB;
 	private DataFunction operationELF;
 	
+	private FilterFunction filterSRB;
+	private FilterFunction filterELF;
+	private FilterFunction filterCurrent;
+	
 	public static final Font DEFAULT_FONT = new Font("Times New Roman", Font.PLAIN, 22);
 	public static final double DEFAULT_LEGRATIO = 0.15;
 	public static final String DEFAULT_TIMEFMT = "HH:MM dd-MMM-yyyy";
@@ -124,6 +131,10 @@ public class Config
 		
 		operationSRB = new RmsFunction();
 		operationELF = new MedianaFunction();
+		
+		filterSRB = new FilterFunctionRemoveDuplicates();
+		filterELF = new FilterFunctionRemoveDuplicates();
+		filterCurrent = new FilterFunctionConvertToUTC();
 		
 		forceYmin = 0;
 		forceYmax = 0;
@@ -259,6 +270,13 @@ public class Config
 				else if (command.equals("operationELF"))
 					operationELF = DataFunction.create(arg);
 				
+				else if (command.equals("filterSRB"))
+					filterSRB = FilterFunction.create(arg);
+				else if (command.equals("filterELF"))
+					filterELF = FilterFunction.create(arg);
+				else if (command.equals("filterCurrent"))
+					filterCurrent = FilterFunction.create(arg);
+				
 				else
 					continue;	// invalid line
 			}
@@ -311,6 +329,10 @@ public class Config
 			
 			bf.write("operationELF: " + operationELF.getName() + "\n");
 			bf.write("operationSRB: " + operationSRB.getName() + "\n");
+			
+			bf.write("filterELF: " + filterELF.getName() + "\n");
+			bf.write("filterSRB: " + filterSRB.getName() + "\n");
+			bf.write("filterCurrent: " + filterCurrent.getName() + "\n");
 			
 			if (forceYmin != 0 && forceYmax != 0) {
 				bf.write("forceYmin: " + forceYmin + "\n");
@@ -491,5 +513,29 @@ public class Config
 
 	public void setOperationELF(DataFunction operationELF) {
 		this.operationELF = operationELF;
+	}
+
+	public FilterFunction getFilterSRB() {
+		return filterSRB;
+	}
+
+	public void setFilterSRB(FilterFunction filterSRB) {
+		this.filterSRB = filterSRB;
+	}
+
+	public FilterFunction getFilterELF() {
+		return filterELF;
+	}
+
+	public void setFilterELF(FilterFunction filterELF) {
+		this.filterELF = filterELF;
+	}
+
+	public FilterFunction getFilterCurrent() {
+		return filterCurrent;
+	}
+
+	public void setFilterCurrent(FilterFunction filterCurrent) {
+		this.filterCurrent = filterCurrent;
 	}
 }

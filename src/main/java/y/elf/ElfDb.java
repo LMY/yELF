@@ -26,12 +26,13 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import y.elf.datafunctions.DataFunction;
+import y.elf.filterfunctions.FilterFunction;
 
 public class ElfDb extends MeasurementDb
 {
-	public static ElfDb load(String[] filenames, int fieldn, int low) {
+	public static ElfDb load(String[] filenames, int fieldn, int low, FilterFunction filter) {
 		final ElfDb db = new ElfDb();
-		db.add(filenames, fieldn, low);
+		db.add(filenames, fieldn, low, filter);
 		return db;
 	}
 	
@@ -66,7 +67,7 @@ public class ElfDb extends MeasurementDb
 	}
 	
 	@Override
-	public boolean add(String filename, int valuefieldn, int low) {
+	protected boolean add(String filename, int valuefieldn, int low) {
 		List<ElfValue> newlista = DbReader.readFile(filename, low, valuefieldn);
 		
 		// if no value were readen, try to fallback to old format
@@ -87,6 +88,11 @@ public class ElfDb extends MeasurementDb
 		
 		for (int i=0; i<sampledList.size(); i++)
 			sampledData[i] = sampledList.get(i).toArray(new ElfValue[sampledList.get(i).size()]);
+	}
+	
+	@Override
+	public void applyFilter(FilterFunction filter) {
+		filter.filter(rawData);
 	}
 
 	@Override

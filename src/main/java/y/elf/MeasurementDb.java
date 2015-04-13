@@ -11,6 +11,7 @@ import java.util.Map;
 import org.joda.time.DateTime;
 
 import y.elf.datafunctions.DataFunction;
+import y.elf.filterfunctions.FilterFunction;
 import y.utils.Config;
 
 public abstract class MeasurementDb {
@@ -32,12 +33,15 @@ public abstract class MeasurementDb {
 	private int maxidx;
 
 	
-	public boolean add(String[] filenames, int valuefieldn, int low)
+	public boolean add(String[] filenames, int valuefieldn, int low, FilterFunction filter)
 	{
 		boolean ret = true;
 		
 		for (String s : filenames)
 			ret &= add(s, valuefieldn, low);
+		
+		if (filter != null)
+			applyFilter(filter);
 		
 		return ret;
 	}
@@ -45,7 +49,7 @@ public abstract class MeasurementDb {
 	/**
 	 * read a given file, adding value to db
 	 */
-	public abstract boolean add(String filename, int valuefieldn, int low);
+	protected abstract boolean add(String filename, int valuefieldn, int low);
 	
 	/**
 	 * divide data into periods.
@@ -71,11 +75,16 @@ public abstract class MeasurementDb {
 	 */
 	public abstract void clearSampled();
 
-	
 	/**
 	 * sort raw data, delete duplicated times
 	 */
 	public abstract void sort();
+	
+	
+	/**
+	 * apply validity filter (remove duplicates, convert to utc, ...) 
+	 */
+	public abstract void applyFilter(FilterFunction filter);
 	
 	
 	/**
@@ -154,11 +163,44 @@ public abstract class MeasurementDb {
 		switch (period) {
 			case FROMTO:
 			case DAILY: return cutDo(values, 2);
-			case WEEKLY: return cutDo(values, 1); // TODO: cut weeks
+			case WEEKLY: return cutDoWeeks(values);
 			case MONTHLY: return cutDo(values, 1);
 			case YEARLY: return cutDo(values, 0);
 			default: return null;
 		}
+	}
+	
+	private <T extends MeasurementValue> List<List<T>> cutDoWeeks(Collection<T> values)
+	{
+		final Map<Long, List<T>> map = new HashMap<Long, List<T>>();
+		
+		for (T v: values) {
+			final DateTime time = v.getTime();
+			
+			final Long week = (long) ((time.year().get()-2000)*60 + time.getWeekOfWeekyear());
+			
+			List<T> day = map.get(week);
+			if (day == null) {
+				day = new ArrayList<T>();
+				map.put(week, day);
+			}
+			
+			day.add(v);
+		}
+		
+		// sorted periods
+		periods = map.keySet().toArray(new DateTime[map.keySet().size()]);
+		Arrays.sort(periods);
+		
+		// map to list
+		final List<List<T>> ret = new ArrayList<List<T>>();
+		for (DateTime t : periods) {
+			final List<T> d = map.get(t);
+			Collections.sort(d);
+			ret.add(d);
+		}
+
+		return ret;
 	}
 	
 	private <T extends MeasurementValue> List<List<T>> cutDo(Collection<T> values, int cutType)
@@ -167,6 +209,7 @@ public abstract class MeasurementDb {
 		
 		for (T v: values) {
 			final DateTime time = v.getTime();
+			
 			final DateTime keytime = new DateTime(time.year().get(), cutType >= 1 ? time.monthOfYear().get() : 0, cutType >= 2 ? time.dayOfMonth().get() : 0,
 																 cutType >= 3 ? time.hourOfDay().get() : 0, cutType >= 4 ? time.minuteOfHour().get() : 0);
 			
