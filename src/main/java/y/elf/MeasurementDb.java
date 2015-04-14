@@ -87,6 +87,8 @@ public abstract class MeasurementDb {
 	public abstract void applyFilter(FilterFunction filter);
 	
 	
+	public abstract List<? extends MeasurementValue> getRawData();
+	
 	/**
 	 * clear entire db
 	 */

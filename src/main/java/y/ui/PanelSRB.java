@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Comparator;
 import java.util.Date;
 
 import javax.swing.JButton;
@@ -22,6 +23,8 @@ import javax.swing.table.AbstractTableModel;
 import org.joda.time.DateTime;
 
 import y.elf.ElfDb;
+import y.elf.ElfValue;
+import y.elf.MeasurementValue;
 import y.elf.MeasurementDb.PeriodType;
 import y.graphs.ChartHelperSRB;
 import y.graphs.XLSHelper;
@@ -188,8 +191,8 @@ public class PanelSRB extends PanelYEM
 		
 		boolean[] valuevalid = filteredValues.getOpValid();
 		
-		for (int i=0; i<valuevalid.length+1; i++)
-			if (i == valuevalid.length || valuevalid[i])
+		for (int i=0; i<valuevalid.length+2; i++)
+			if (i >= valuevalid.length || valuevalid[i])
 				table.addRowSelectionInterval(i, i);
 	}
 	
@@ -217,7 +220,7 @@ public class PanelSRB extends PanelYEM
 	    	final int[] maxs = db.getOpMaxDay();
 	    	final int[] count = db.getOpValueCount();
 	    	
-	    	this.data = new Object[times.length+1][];
+	    	this.data = new Object[times.length+2][];
 	    	
 	    	for (int i=0; i<times.length; i++) {
 	    		data[i] = new Object[4];
@@ -228,11 +231,23 @@ public class PanelSRB extends PanelYEM
 	    	}
 	    	
 	    	final int maxi = db.getMaxidx();
+	    	data[data.length-2] = new Object[4];
+	    	data[data.length-2][0] = Config.getResource("MsgMax")+"("+db.getOperationPerformed().getName()+") - "+Utils.toDateString(times[maxi]);
+    		data[data.length-2][1] = MeasurementValue.valueIntToDouble(medie[maxi]);
+    		data[data.length-2][2] = MeasurementValue.valueIntToDouble(maxs[maxi]);
+    		data[data.length-2][3] = count[maxi];
+
+    		final ElfValue maxvalue = db.getSelectedElfValue(new Comparator<ElfValue>() {
+				@Override
+				public int compare(ElfValue o1, ElfValue o2) {
+					return o1.getValue()-o2.getValue();
+				}
+    		});
 	    	data[data.length-1] = new Object[4];
-	    	data[data.length-1][0] = Config.getResource("MsgMax")+"("+Utils.toDateString(times[maxi])+")";
-    		data[data.length-1][1] = ((double)medie[maxi]/100);
-    		data[data.length-1][2] = ((double)maxs[maxi]/100);
-    		data[data.length-1][3] = count[maxi];
+	    	data[data.length-1][0] = Config.getResource("MsgMax")+"("+Utils.toDateString(maxvalue.getTime())+")";
+    		data[data.length-1][1] = MeasurementValue.valueIntToDouble(maxvalue.getValue());
+    		data[data.length-1][2] = MeasurementValue.valueIntToDouble(maxvalue.getMax());
+    		data[data.length-1][3] = 1;
 		}
 	    
 	    public int getColumnCount() 

@@ -1,32 +1,15 @@
-/*
-	This file is part of yAmbElf.
-
-	yAmbElf is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	yAmbElf is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with yAmbElf.  If not, see <http://www.gnu.org/licenses/>.
-	
-	Copyright 2014 Miro Salvagni
-*/
-
 package y.elf;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.joda.time.DateTime;
 
 import y.elf.datafunctions.DataFunction;
 import y.elf.filterfunctions.FilterFunction;
+
 
 public class ElfDb extends MeasurementDb
 {
@@ -36,6 +19,7 @@ public class ElfDb extends MeasurementDb
 		return db;
 	}
 	
+	
 	private List<ElfValue> rawData;
 	private ElfValue[][] sampledData = null;
 
@@ -43,11 +27,14 @@ public class ElfDb extends MeasurementDb
 		super();
 	}
 	
+	@Override
+	public List<? extends MeasurementValue> getRawData() { return rawData; }
+
 
 	@Override
 	public DateTime getStartDate() {
 		try {
-			if (rawData != null)
+			if (rawData != null && !rawData.isEmpty())
 				return rawData.get(0).getTime();
 			else
 				return sampledData[0][0].getTime();
@@ -58,7 +45,7 @@ public class ElfDb extends MeasurementDb
 	@Override
 	public DateTime getEndDate() {
 		try {
-			if (rawData != null)
+			if (rawData != null && !rawData.isEmpty())
 				return rawData.get(rawData.size()-1).getTime();
 			else
 				return sampledData[sampledData.length-1][sampledData[sampledData.length-1].length-1].getTime();
@@ -178,5 +165,23 @@ public class ElfDb extends MeasurementDb
 	
 	public ElfValue[][] getSampledData() {
 		return sampledData;
+	}
+	
+	public ElfValue getSelectedElfValue(Comparator<ElfValue> comparator) {
+		ElfValue ret = null;
+		
+		if (rawData != null && !rawData.isEmpty()) {
+			for (ElfValue e : rawData)
+				if (ret == null || comparator.compare(e, ret) > 1)
+					ret = e;
+		}
+		else
+			if (sampledData != null)
+				for (int y=0; y<sampledData.length; y++)
+					for (int x=0; x<sampledData[y].length; x++)
+						if (ret == null || comparator.compare(sampledData[y][x], ret) > 1)
+							ret = sampledData[y][x];
+		
+		return ret;
 	}
 }

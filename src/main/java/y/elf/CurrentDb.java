@@ -28,9 +28,13 @@ public class CurrentDb extends MeasurementDb {
 	}
 	
 	@Override
+	public List<? extends MeasurementValue> getRawData() { return rawData; }
+
+	
+	@Override
 	public DateTime getStartDate() {
 		try {
-			if (rawData != null)
+			if (rawData != null && !rawData.isEmpty())
 				return rawData.get(0).getTime();
 			else
 				return sampledData[0][0].getTime();
@@ -41,7 +45,7 @@ public class CurrentDb extends MeasurementDb {
 	@Override
 	public DateTime getEndDate() {
 		try {
-			if (rawData != null)
+			if (rawData != null && !rawData.isEmpty())
 				return rawData.get(rawData.size()-1).getTime();
 			else
 				return sampledData[sampledData.length-1][sampledData[sampledData.length-1].length-1].getTime();
