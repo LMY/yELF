@@ -245,7 +245,7 @@ public class PanelCurrents  extends PanelYEM {
 		masterDB = CurrentDb.load(curFilelist.getSelectedFilenames(), config.getCurrentValuefieldn(), config);
 		
 		if (masterDB.size() == 0)
-			Utils.MessageBox("occhio, db vuoto", Config.getResource("TitleWarning"));
+			Utils.MessageBox(Config.getResource("MsgEmptyDbAfterRead"), Config.getResource("TitleWarning"));
 		
 		// non chiamare MAI .match() su masterDB!
 		if (masterDB == null) return;		

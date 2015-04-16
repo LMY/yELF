@@ -43,6 +43,8 @@ public abstract class MeasurementDb {
 		if (filter != null)
 			applyFilter(filter);
 		
+		sort();
+		
 		return ret;
 	}
 	
