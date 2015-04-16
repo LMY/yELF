@@ -234,7 +234,7 @@ public class Utils
 	
 	public static boolean abortOnExistingAndDontOverwrite(String filename)
 	{
-		return (new File(filename).exists() && Utils.MessageBoxYesNo(null, filename+" "+"MsgOverwrite", "TitleOverwrite") == false);
+		return (new File(filename).exists() && Utils.MessageBoxYesNo(null, filename+" "+Config.getResource("MsgOverwrite"), Config.getResource("TitleOverwrite")) == false);
 	}
 	
 	
