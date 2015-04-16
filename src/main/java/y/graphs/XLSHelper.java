@@ -21,6 +21,7 @@ package y.graphs;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -52,7 +53,9 @@ import org.joda.time.DateTime;
 
 import y.elf.CurrentElfDb;
 import y.elf.CurrentValue;
+import y.elf.ElfDb;
 import y.elf.ElfValue;
+import y.elf.MeasurementValue;
 import y.utils.Config;
 import y.utils.Utils;
 
@@ -67,8 +70,14 @@ public class XLSHelper
 		return maxv;
 	}
 
-	public static boolean saveData(String filename, ElfValue[][] dayvalues, int[] mediane, int[] maxs, int[] counts, double sensibilita, boolean save_grafico)
+	public static boolean saveElfData(String filename, ElfDb db, double sensibilita, boolean save_grafico)
 	{
+		final DateTime[] times = db.getPeriods();
+		final ElfValue[][] dayvalues = db.getSampledData();
+		final int[] mediane = db.getOpValues();
+		final int[] maxs = db.getOpMaxDay();
+		final int[] counts = db.getOpValueCount();
+		
 		Workbook wb = null;
 		
 		try {
@@ -119,11 +128,11 @@ public class XLSHelper
 			    cell.setCellValue(counts[i]);
 		    }
 		    
-		    // riga col massimo
+		    // line with DataFunction max
 		    row = sheet.createRow(rown++);
 		    row = sheet.createRow(rown++);
 		    cell = row.createCell(0);
-		    cell.setCellValue(Config.getResource("TitleMaxM")+" ("+Utils.toDateString(dayvalues[maxi][0].getTime())+")");
+		    cell.setCellValue(Config.getResource("MsgMax")+"("+db.getOperationPerformed().getName()+") - "+Utils.toDateString(times[maxi]));
 		    
 		    cell = row.createCell(1);
 		    cell.setCellStyle(doubleFormat1);
@@ -137,7 +146,30 @@ public class XLSHelper
 		    cell.setCellValue(counts[maxi]);
 		    
 		    
-		    // foglio con tutti i dati
+		    // line with max
+    		final ElfValue maxvalue = db.getSelectedElfValue(new Comparator<ElfValue>() {
+				@Override
+				public int compare(ElfValue o1, ElfValue o2) {
+					return o1.getValue()-o2.getValue();
+				}
+    		});
+		    row = sheet.createRow(rown++);
+		    cell = row.createCell(0);
+		    cell.setCellValue(Config.getResource("MsgMax")+"("+Utils.toDateString(maxvalue.getTime())+")");
+		    
+		    cell = row.createCell(1);
+		    cell.setCellStyle(doubleFormat1);
+		    cell.setCellValue(MeasurementValue.valueIntToDouble(maxvalue.getValue()));
+		    
+		    cell = row.createCell(2);
+		    cell.setCellStyle(doubleFormat1);
+		    cell.setCellValue(MeasurementValue.valueIntToDouble(maxvalue.getMax()));
+		    
+		    cell = row.createCell(3);
+		    cell.setCellValue(counts[maxi]);		    
+		    
+		    
+		    // sheet containing all raw data
 		    Sheet sheetdata = wb.createSheet(Config.getResource("TitleSheetDatas"));
 		    CellStyle dateTimeStyle2 = wb.createCellStyle();
 		    dateTimeStyle2.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));

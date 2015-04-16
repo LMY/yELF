@@ -282,7 +282,7 @@ public class PanelELF extends PanelYEM
 		if (!path.contains("."))
 			path += ".xlsx";
 		
-		return XLSHelper.saveData(path, filteredValues.getSampledData(), filteredValues.getOpValues(), filteredValues.getOpMaxDay(), filteredValues.getOpValueCount(), Config.getInstance().getInstrumentLowELF(), false);
+		return XLSHelper.saveElfData(path, filteredValues, Config.getInstance().getInstrumentLowELF(), false);
 	}
 	
 	public boolean saveGfx()
