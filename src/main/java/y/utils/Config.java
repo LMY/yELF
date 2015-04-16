@@ -37,7 +37,6 @@ import y.elf.datafunctions.DataFunction;
 import y.elf.datafunctions.MedianaFunction;
 import y.elf.datafunctions.RmsFunction;
 import y.elf.filterfunctions.FilterFunction;
-import y.elf.filterfunctions.FilterFunctionConvertToUTC;
 import y.elf.filterfunctions.FilterFunctionRemoveDuplicates;
 
 public class Config
@@ -134,7 +133,7 @@ public class Config
 		
 		filterSRB = new FilterFunctionRemoveDuplicates();
 		filterELF = new FilterFunctionRemoveDuplicates();
-		filterCurrent = new FilterFunctionConvertToUTC();
+		filterCurrent = new FilterFunctionRemoveDuplicates();
 		
 		forceYmin = 0;
 		forceYmax = 0;
