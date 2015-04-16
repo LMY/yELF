@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -61,6 +62,9 @@ public class Config
 	private static void init(String filename) { instance = new Config(filename); }
 	
 	private Map<String, ArrayList<ConfigSerie>> const_values;
+	
+	private String workingFolder;
+	private String lastUsedFolder;	// for this session only, will not be saved
 	
 	private int pictureWidth;
 	private int pictureHeight;
@@ -107,12 +111,10 @@ public class Config
 		Load(filename);
 	}
 	
-	private String lastUsedFolder;	// for this session only, will not be saved
-	
-	
 	public void LoadDefaults()
 	{
-		lastUsedFolder = ".";
+		workingFolder = ".";
+		lastUsedFolder = workingFolder;
 		pictureWidth = 1100;
 		pictureHeight = 550;
 		legendSize = DEFAULT_LEGRATIO;
@@ -218,6 +220,8 @@ public class Config
 					legendX = Double.parseDouble(arg);
 				else if (command.equals("legendY"))
 					legendY = Double.parseDouble(arg);
+				else if (command.equals("workingFolder"))
+					lastUsedFolder = workingFolder = arg;				
 				else if (command.equals("elfValuefieldn"))
 					elfValuefieldn = Integer.parseInt(arg);
 				else if (command.equals("srbValuefieldn"))
@@ -320,6 +324,7 @@ public class Config
 			bf.write("srbValuefieldn: " + srbValuefieldn + "\n");
 			bf.write("currentValuefieldn: " + currentValuefieldn + "\n");
 			
+			bf.write("workingFolder: " + workingFolder + "\n");
 			bf.write("minDataCoverage100: " + minDataCoverage100 + "\n");
 			
 			bf.write("instrumentLowELF: " + instrumentLowELF + "\n");
@@ -418,7 +423,7 @@ public class Config
 		this.axisFormat = axisFormat;
 	}
 	public String getLastUsedFolder() {
-		return lastUsedFolder;
+		return new File(lastUsedFolder).exists() ? lastUsedFolder : workingFolder;	// if lastUsedFolder does not exist, return workingFolder
 	}
 	public void setLastUsedFolder(String lastUsedFolder) {
 		this.lastUsedFolder = lastUsedFolder;
@@ -432,7 +437,6 @@ public class Config
 	public int getInstrumentLowSRB() {
 		return instrumentLowSRB;
 	}
-
 	public void setInstrumentLowSRB(int instrumentLowSRB) {
 		this.instrumentLowSRB = instrumentLowSRB;
 	}
@@ -537,4 +541,13 @@ public class Config
 	public void setFilterCurrent(FilterFunction filterCurrent) {
 		this.filterCurrent = filterCurrent;
 	}
+
+	public String getWorkingFolder() {
+		return workingFolder;
+	}
+
+	public void setWorkingFolder(String workingFolder) {
+		this.workingFolder = workingFolder;
+	}
+	
 }

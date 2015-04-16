@@ -33,6 +33,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -91,6 +92,9 @@ public class PanelConfig extends JPanel
 	private JTextField legendSize;
 	private JTextField legendX;
 	private JTextField legendY;
+	
+	private JTextField workingFolder;
+	
 	private JTextField instrumentLowELF;
 	private JTextField instrumentLowSRB;
 	private JTextField instrumentLowCurrent;
@@ -172,6 +176,7 @@ public class PanelConfig extends JPanel
 		legendSize = new JTextField();
 		legendX = new JTextField();
 		legendY = new JTextField();
+		workingFolder = new JTextField();
 		instrumentLowELF = new JTextField();
 		instrumentLowSRB = new JTextField();
 		instrumentLowCurrent = new JTextField();
@@ -240,6 +245,9 @@ public class PanelConfig extends JPanel
 		generalTab.add(legendX);
 		generalTab.add(new JLabel(" "+Config.getResource("TitleLegendY")));
 		generalTab.add(legendY);
+		
+		generalTab.add(new JLabel(" "+Config.getResource("TitleWorkingFolder")));
+		generalTab.add(createOpenDirectoryTextField(this, workingFolder, Config.getResource("TitleWorkingFolder")));
 		
 		generalTab.add(new JLabel(" "+Config.getResource("TitleInstrumentalLowCurrent")));
 		generalTab.add(instrumentLowCurrent);
@@ -426,7 +434,30 @@ public class PanelConfig extends JPanel
 		theColumn.setCellEditor(new DefaultCellEditor(comboBox));
 	}
 
+	private static JPanel createOpenDirectoryTextField(final Component window, final JTextField textedit, final String dialog_title)
+	{
+		JPanel jp = new JPanel();
+		jp.setLayout(new BorderLayout());
+		JButton btn = new JButton("...");
+		btn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser chooser = new JFileChooser(Config.getInstance().getLastUsedFolder());
+				chooser.setDialogTitle(dialog_title);
+			    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			    chooser.setAcceptAllFileFilterUsed(false);
 
+				if (chooser.showOpenDialog(window) == JFileChooser.APPROVE_OPTION)
+					textedit.setText(chooser.getSelectedFile().getAbsolutePath());
+			}
+		});
+		
+		jp.add(textedit, BorderLayout.CENTER);
+		jp.add(btn, BorderLayout.EAST);
+		
+		return jp;
+	}
+	
     public class TableModel extends AbstractTableModel
 	{
 		private static final long serialVersionUID = 7804380016977209351L;
@@ -615,6 +646,8 @@ public class PanelConfig extends JPanel
 		try { conf.setLegendX(Integer.parseInt(legendX.getText())); } catch (Exception e) {}
 		try { conf.setLegendY(Integer.parseInt(legendY.getText())); } catch (Exception e) {}
 		
+		conf.setWorkingFolder(workingFolder.getText());
+		
 		if (graphYmin.getText().isEmpty() && graphYmax.getText().isEmpty()) {
 			conf.setForceYmin(0); // disable force y range
 			conf.setForceYmax(0);
@@ -667,6 +700,7 @@ public class PanelConfig extends JPanel
 		legendX.setText(""+conf.getLegendX());
 		legendY.setText(""+conf.getLegendY());
 		
+		workingFolder.setText(conf.getWorkingFolder());
 		minDataCoverage100.setText(""+Utils.formatDoubleAsNeeded(conf.getMinDataCoverage100()*100));
 		
 		instrumentLowELF.setText(""+ElfValue.valueIntToString(conf.getInstrumentLowELF()));
