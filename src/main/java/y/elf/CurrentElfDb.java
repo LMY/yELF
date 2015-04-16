@@ -2,122 +2,129 @@ package y.elf;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
 
+import y.elf.filterfunctions.FilterFunction;
 import y.utils.Config;
 import y.utils.Utils;
 
 public class CurrentElfDb {
 
-	private List<ElfValue> elfDb;
-	private List<CurrentValue> currentDb;
+	private ElfDb elfDb;
+	private CurrentDb currentDb;
 	
-	
-	public CurrentElfDb(List<ElfValue> elfDb, List<CurrentValue> currentDb) {
-		this.elfDb = elfDb;
-		this.currentDb = currentDb;
-	}
 	
 	public CurrentElfDb() {
-		this(new ArrayList<ElfValue>(), new ArrayList<CurrentValue>());
+		this.elfDb = new ElfDb();
+		this.currentDb = new CurrentDb();
 	}
 	
-	public void loadElfValues(String[] filenames, int fieldn) {
-		elfDb.addAll(DbReader.readFiles(filenames, fieldn, Config.getInstance().getInstrumentLowELF()));
+	public boolean loadElfValues(String[] filenames, int valuefieldn, int low, FilterFunction filter) {
+		return elfDb.add(filenames, valuefieldn, low, filter);
 	}
 	
-	public void loadCurrentValues(String[] filenames, int fieldn, int threshold) {
-		final List<CurrentValue> unfiltered = DbReader.readCurrentFiles(filenames, fieldn, -1);
-		for (CurrentValue c : unfiltered)
-			if (c.getValue() >= threshold)
-				currentDb.add(c);
+	public boolean loadCurrentValues(String[] filenames, int fieldn, Config config) {
+		CurrentDb unfiltered = new CurrentDb();
+		if (!unfiltered.add(filenames, fieldn, -1, config.getFilterCurrent()))
+			return false;
+		
+		currentDb = unfiltered.filterLowCut(config);
+		return true;
 	}
 	
 	
-	public static CurrentElfDb createDb(String[] elfFilenames, int elfFieldn, String[] currentFilenames, int currentFieldn, int currentThreshold) {
+	public static CurrentElfDb createDb(String[] elfFilenames, String[] currentFilenames, Config config) {
 		
 		CurrentElfDb db = new CurrentElfDb();
-		db.loadElfValues(elfFilenames, elfFieldn);
-		db.loadCurrentValues(currentFilenames, currentFieldn, currentThreshold);
+		db.loadElfValues(elfFilenames, config.getElfValuefieldn(), config.getInstrumentLowELF(), config.getFilterELF());
+		db.loadCurrentValues(currentFilenames, config.getCurrentValuefieldn(), config);
 		
-		if (db.getElfDb().isEmpty())
-			Utils.MessageBox("Db elf vuoto dopo lettura", "WARNING");
-		if (db.getCurrentDb().isEmpty())
-			Utils.MessageBox("Db correnti vuoto dopo lettura", "WARNING");
+//		if (db.getElfDb().isEmpty())
+//			Utils.MessageBox("Db elf vuoto dopo lettura", "WARNING");
+//		if (db.getCurrentDb().isEmpty())
+//			Utils.MessageBox("Db correnti vuoto dopo lettura", "WARNING");
 		
 		return db;
 	}
 	
 	public CurrentElfDb cut(DateTime from, DateTime to, int dt) {
-		CurrentElfDb db = new CurrentElfDb();
+		CurrentElfDb newdb = new CurrentElfDb();
 		
-		for (CurrentValue cv : currentDb) {
+		final List<ElfValue> elfs = getElfDb();
+		final List<CurrentValue> currents = getCurrentDb();
+		
+		final List<ElfValue> newelfs = newdb.getElfDb();
+		final List<CurrentValue> newcurrents = newdb.getCurrentDb();
+		
+		for (CurrentValue cv : currents) {
 			final DateTime tv = cv.getTime();
 			if (tv.compareTo(from) >= 0 && tv.compareTo(to) <= 0)
-				db.currentDb.add(cv);
+				newcurrents.add(cv);
 		}
 				
-		for (ElfValue ev : elfDb) {
+		for (ElfValue ev : elfs) {
 			final DateTime tv = ev.getTime();
 			if (tv.compareTo(from) >= 0 && tv.compareTo(to) <= 0)
-				db.elfDb.add(dt == 0 ? ev : ev.shift(dt));
+				newelfs.add(dt == 0 ? ev : ev.shift(dt));
 		}
 		
-		return db;
+		return newdb;
 	}
 	
 	
 	// delete from ElfValues and currentValues all entries with TimeValue not in both lists
 	public int match() {
 		
-		Set<DateTime> etv = new HashSet<DateTime>();
-		Set<DateTime> ctv = new HashSet<DateTime>();
+		Set<Instant> etv = new HashSet<Instant>();
+		Set<Instant> ctv = new HashSet<Instant>();
+		final List<ElfValue> elfs = getElfDb();
+		final List<CurrentValue> currents = getCurrentDb();
 		
-		for (CurrentValue cv : currentDb)
-			ctv.add(cv.getTime());
-		for (ElfValue ev : elfDb)
-			if (ev.getValue() >= 0.10)	// solo valori > 0.10, come secondo normativa punto 1
-				etv.add(ev.getTime());
+		for (CurrentValue cv : currents)
+			ctv.add(cv.getTime().toInstant());
+		for (ElfValue ev : elfs)
+//			if (ev.getValue() >= 0.10)	// low cut done in loadCurrentValues() // solo valori > 0.10, come secondo normativa punto 1
+				etv.add(ev.getTime().toInstant());
 		
-		Iterator<CurrentValue> itcur = currentDb.iterator();
+		Iterator<CurrentValue> itcur = currents.iterator();
 		while (itcur.hasNext()) {
 			final CurrentValue curvalue = itcur.next();
 			
-			if (!etv.contains(curvalue.getTime()))
+			if (!etv.contains(curvalue.getTime().toInstant()))
 				itcur.remove();
 		}
 		
-		Iterator<ElfValue> itelf = elfDb.iterator();
+		Iterator<ElfValue> itelf = elfs.iterator();
 		while (itelf.hasNext()) {
 			final ElfValue curvalue = itelf.next();
 			
-			if (!ctv.contains(curvalue.getTime()))
+			if (!ctv.contains(curvalue.getTime().toInstant()))
 				itelf.remove();
 		}
 		
 		final int csz = currentDb.size();
 		final int esz = elfDb.size();
 		
-		if (csz == 0 && esz == 0)
-			Utils.MessageBox("Db di corrente e elf vuoti dopo match", "WARNING");
-		else if (csz == 0)
-			Utils.MessageBox("Db di corrente vuoto dopo match", "WARNING");
-		else if (esz == 0)
-			Utils.MessageBox("Db elf vuoto dopo match", "WARNING");
-		else if (csz != esz)
-			Utils.MessageBox("Db elf/correnti con lunghezze differenti: "+esz+" "+csz, "WARNING");
+//		if (csz == 0 && esz == 0)
+//			Utils.MessageBox("Db di corrente e elf vuoti dopo match", "WARNING");
+//		else if (csz == 0)
+//			Utils.MessageBox("Db di corrente vuoto dopo match", "WARNING");
+//		else if (esz == 0)
+//			Utils.MessageBox("Db elf vuoto dopo match", "WARNING");
+//		else if (csz != esz)
+//			Utils.MessageBox("Db elf/correnti con lunghezze differenti: "+esz+" "+csz, "WARNING");
 		
-		return csz == esz ? csz : -1; // -1 if different, size otherwise
+		return csz == esz ? csz : -Math.abs(csz - esz); // -delta if different, size otherwise
 	}
 
-	public DateTime getStartDate() { return currentDb.size() <= 0 ? new DateTime(2000, 1, 1, 0, 0) : currentDb.get(0).getTime(); }
-	public DateTime getEndDate() { return currentDb.size() <= 0 ? new DateTime(2999, 12, 12, 23, 59) : currentDb.get(currentDb.size()-1).getTime(); }
+	public DateTime getStartDate() { return currentDb.getStartDate(); }
+	public DateTime getEndDate() { return currentDb.getEndDate(); }
 	
 	public boolean saveAs(String filename, String csvSeparator) {
 		try {
@@ -125,9 +132,12 @@ public class CurrentElfDb {
 			
 			bw.write("Date" + csvSeparator + "Time" + csvSeparator + "B" + csvSeparator + "I" + "\n");
 			
+			final List<ElfValue> elfs = getElfDb();
+			final List<CurrentValue> currents = getCurrentDb();
+			
 			for (int i=0; i<elfDb.size(); i++) {
-				final ElfValue ev = elfDb.get(i);
-				final CurrentValue cv = currentDb.get(i);
+				final ElfValue ev = elfs.get(i);
+				final CurrentValue cv = currents.get(i);
 				
 				bw.write(Utils.toDateString(ev.getTime()) + csvSeparator + Utils.toTimeString(ev.getTime()) + csvSeparator);
 				bw.write(ElfValue.valueIntToString(ev.getValue()) + csvSeparator + cv.getValue() + "\n");
@@ -148,17 +158,19 @@ public class CurrentElfDb {
 			Utils.MessageBox(Config.getResource("MsgDifferentLength"), Config.getResource("TitleErrorInternal"));
 			return -999;
 		}
+		final List<ElfValue> elfs = getElfDb();
+		final List<CurrentValue> currents = getCurrentDb();
 		
-		final double meancur = meanSerie(currentDb); // new AverageFunction().functionCurr(currentDb);
-		final double meanelf = meanSerie(elfDb); // new AverageFunction().function(elfDb);
+		final double meancur = meanSerie(currents); // new AverageFunction().functionCurr(currentDb);
+		final double meanelf = meanSerie(elfs); // new AverageFunction().function(elfDb);
 		
 		double num = 0;
 		double dcur = 0;
 		double delf = 0;
 		
 		for (int i=0; i<currentDb.size(); i++) {
-			final double cc = currentDb.get(i).getValue();
-			final double ce = elfDb.get(i).getValue(); //ElfValue.valueIntToDouble( elfDb.get(i).getValue() );
+			final double cc = currents.get(i).getValue();
+			final double ce = elfs.get(i).getValue(); //ElfValue.valueIntToDouble( elfDb.get(i).getValue() );
 			
 			final double dc = cc-meancur;
 			final double de = ce-meanelf;
@@ -187,10 +199,12 @@ public class CurrentElfDb {
 	
 	public double getRm() {
 		double rm = 0;
+		final List<ElfValue> elfs = getElfDb();
+		final List<CurrentValue> currents = getCurrentDb();
 		
 		for (int i=0; i<currentDb.size(); i++) {
-			final double cc = currentDb.get(i).getValue();
-			final double ce = elfDb.get(i).getValue();
+			final double cc = elfs.get(i).getValue();
+			final double ce = currents.get(i).getValue();
 			
 			rm += ce/cc;
 		}
@@ -205,10 +219,12 @@ public class CurrentElfDb {
 			return 0;
 		
 		double Rm2 = 0;
+		final List<ElfValue> elfs = getElfDb();
+		final List<CurrentValue> currents = getCurrentDb();
 
 		for (int i=0; i<size; i++) {
-			final double Ii = currentDb.get(i).getValue();
-			final double Bi = elfDb.get(i).getValue();
+			final double Ii = elfs.get(i).getValue();
+			final double Bi = currents.get(i).getValue();
 			final double Ri = Bi/Ii;
 			
 			Rm2 += Ri*Ri;
@@ -218,11 +234,13 @@ public class CurrentElfDb {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<ElfValue> getElfDb() {
-		return elfDb;
+		return (List<ElfValue>) elfDb.getRawData();
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<CurrentValue> getCurrentDb() {
-		return currentDb;
+		return (List<CurrentValue>) currentDb.getRawData();
 	}
 }

@@ -42,6 +42,7 @@ public class PanelCurrentCorrel extends PanelYEM
 	private JTextField textErrI;
 	private JTextField textErrB;
 
+	private JTextField textMatchingN;
 	private JTextField textCorrelation;
 	private JTextField textBmax;
 
@@ -68,6 +69,8 @@ public class PanelCurrentCorrel extends PanelYEM
 		
 		daSpinner = PanelELF.createDateSpinner();
 		aSpinner = PanelELF.createDateSpinner();
+		textMatchingN = new JTextField();
+		textMatchingN.setEditable(false);
 		textCorrelation = new JTextField(Config.getResource("MsgNone"));
 		textCorrelation.setEditable(false);
 		textBmax = new JTextField(Config.getResource("MsgNone"));
@@ -138,6 +141,8 @@ public class PanelCurrentCorrel extends PanelYEM
 		JPanel eastUp = new JPanel();
 		eastUp.setLayout(new GridLayout(0,2));
 		
+		eastUp.add(new JLabel(Config.getResource("TitleMatchingDataN")));
+		eastUp.add(textMatchingN);
 		eastUp.add(new JLabel(" "+Config.getResource("MsgFrom")+":"));
 		eastUp.add(daSpinner);
 		eastUp.add(new JLabel(" "+Config.getResource("MsgTo")+":"));
@@ -197,8 +202,7 @@ public class PanelCurrentCorrel extends PanelYEM
 		
 		final Config config = Config.getInstance();
 		
-		masterDB = CurrentElfDb.createDb(elfFilelist.getFilenames(), config.getElfValuefieldn(),
-										curFilelist.getFilenames(), config.getCurrentValuefieldn(), config.getCurrentLowCut());
+		masterDB = CurrentElfDb.createDb(elfFilelist.getFilenames(), curFilelist.getFilenames(), config);
 		// non chiamare MAI .match() su masterDB!
 		filtersEnabled = false;
 		daSpinner.setValue(masterDB.getStartDate().toDate());
@@ -219,13 +223,19 @@ public class PanelCurrentCorrel extends PanelYEM
 		final int dt = getDtShift();
 		
 		filteredDB = masterDB.cut(from, to, dt);
-		if (filteredDB.match() < 0)
+		final int matched = filteredDB.match();
+		
+		final Color dasColor = UIManager.getColor(daSpinner);
+
+		textMatchingN.setText(""+matched);
+		textMatchingN.setBackground(matched > 0 ? dasColor : Color.red);
+		
+		if (matched < 0)
 			Utils.MessageBox(Config.getResource("MsgErrorMatch"), Config.getResource("TitleErrorInternal"));
 		
 		final double correlation = filteredDB.correlation();
 		textCorrelation.setText(String.format("%.6f", correlation));
 		if (correlation >= 0.90) {
-			final Color dasColor = UIManager.getColor(daSpinner);
 			textCorrelation.setBackground(dasColor);
 			try {
 				final double Imax = Double.parseDouble(textImax.getText());

@@ -23,7 +23,7 @@ public class ElfDb extends MeasurementDb
 	private List<ElfValue> rawData;
 	private ElfValue[][] sampledData = null;
 
-	private ElfDb() {
+	public ElfDb() {
 		super();
 	}
 	

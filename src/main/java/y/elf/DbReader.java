@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -218,8 +217,8 @@ public class DbReader {
 	
 	
 
-	public static List<CurrentValue> readCurrentFile(String filename, int defaultvalue, int fieldnn) {
-		return readCurrentFile(filename, defaultvalue, fieldnn, DEFAULT_CSV_SEPARATOR, /*DEFAULT_DATE_SEPARATOR,*/ DEFAULT_TIME_SEPARATOR);
+	public static List<CurrentValue> readCurrentFile(String filename, int fieldnn, int defaultvalue) {
+		return readCurrentFile(filename, fieldnn, defaultvalue, DEFAULT_CSV_SEPARATOR, /*DEFAULT_DATE_SEPARATOR,*/ DEFAULT_TIME_SEPARATOR);
 	}
 	
 	
@@ -228,7 +227,7 @@ public class DbReader {
 	private static Pattern pattern1 = Pattern.compile("\\d{1,2}(.)\\d{1,2}\\1\\d{4}");
 	private static Pattern pattern2 = Pattern.compile("\\d{4}(.)\\d{1,2}\\1\\d{1,2}");
 	
-	public static List<CurrentValue> readCurrentFile(String filename, int defaultvalue, int fieldnn, String separatorCsv, String separatorTime)
+	public static List<CurrentValue> readCurrentFile(String filename, int fieldnn, int defaultvalue, String separatorCsv, String separatorTime)
 	{
 		List<CurrentValue> list = new ArrayList<CurrentValue>();
 		
