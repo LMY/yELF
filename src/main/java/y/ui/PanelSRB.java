@@ -172,7 +172,7 @@ public class PanelSRB extends PanelYEM
 		final int low = config.getInstrumentLowSRB();
 		final ElfDb newdb = ElfDb.load(filelist.getFilenames(), valuefieldn, low, config.getFilterSRB());
 		newdb.perform(PeriodType.DAILY, Config.getInstance().getOperationSRB());
-		newdb.clearRaw();	// resample won't be needed after perform()
+//		newdb.clearRaw();	// resample won't be needed after perform()
 		
 		if (newdb != null) {
 			filteredValues = masterValues = null; // prevent change listeners from fire events
