@@ -176,12 +176,19 @@ public abstract class MeasurementDb {
 	
 	private <T extends MeasurementValue> List<List<T>> cutDoWeeks(Collection<T> values)
 	{
+		final int OFFSET = 100;	// any number greater than number of weeks in a year
+		
 		final Map<Long, List<T>> map = new HashMap<Long, List<T>>();
 		
 		for (T v: values) {
 			final DateTime time = v.getTime();
 			
-			final Long week = (long) ((time.year().get()-2000)*60 + time.getWeekOfWeekyear());
+//			Partial week = new Partial(
+//	                   new DateTimeFieldType[] {DateTimeFieldType.weekyear(), 
+//	                                            DateTimeFieldType.weekOfWeekyear()}, 
+//	                                            new int[] {time.year().get(), time.getWeekOfWeekyear()});
+			
+			final Long week = (long) ((time.year().get()-2000)*OFFSET + time.getWeekOfWeekyear());
 			
 			List<T> day = map.get(week);
 			if (day == null) {
@@ -193,13 +200,16 @@ public abstract class MeasurementDb {
 		}
 		
 		// sorted periods
-		periods = map.keySet().toArray(new DateTime[map.keySet().size()]);
-		Arrays.sort(periods);
+		final Long[] keys = map.keySet().toArray(new Long[map.keySet().size()]);
+		periods = new DateTime[keys.length];
+		Arrays.sort(keys);
 		
 		// map to list
 		final List<List<T>> ret = new ArrayList<List<T>>();
-		for (DateTime t : periods) {
-			final List<T> d = map.get(t);
+		for (int i=0; i<keys.length; i++) {
+			final List<T> d = map.get(keys[i]);
+			periods[i] = new DateTime().withYear((int) (keys[i]/OFFSET)).withWeekOfWeekyear((int) (keys[i]%OFFSET)).withDayOfWeek(1); 
+//					new DateTime(2000, 1, 1, 0, 0).withWeekyear(keys[i].get(DateTimeFieldType.weekyear())).withWeekOfWeekyear(keys[i].get(DateTimeFieldType.weekOfWeekyear()));
 			Collections.sort(d);
 			ret.add(d);
 		}
@@ -214,7 +224,7 @@ public abstract class MeasurementDb {
 		for (T v: values) {
 			final DateTime time = v.getTime();
 			
-			final DateTime keytime = new DateTime(time.year().get(), cutType >= 1 ? time.monthOfYear().get() : 0, cutType >= 2 ? time.dayOfMonth().get() : 0,
+			final DateTime keytime = new DateTime(time.year().get(), cutType >= 1 ? time.monthOfYear().get() : 1, cutType >= 2 ? time.dayOfMonth().get() : 1,
 																 cutType >= 3 ? time.hourOfDay().get() : 0, cutType >= 4 ? time.minuteOfHour().get() : 0);
 			
 			List<T> day = map.get(keytime);

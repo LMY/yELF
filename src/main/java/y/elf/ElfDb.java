@@ -143,8 +143,11 @@ public class ElfDb extends MeasurementDb
 		perform(getPeriodDivision(), getOperationPerformed());
 	}
 	
-	public ElfDb filter(DateTime from, DateTime to) //, MeasurementDb.OperationType operationType)
-	{
+	public ElfDb filter(DateTime from, DateTime to) {
+		return filter(from, to, getPeriodDivision(), getOperationPerformed());
+	}
+	
+	public ElfDb filter(DateTime from, DateTime to, PeriodType periodCut, DataFunction operation) {
 		List<ElfValue> newvalues = new ArrayList<ElfValue>();
 
 		for (int i=0, imax=rawData.size(); i<imax; i++) {

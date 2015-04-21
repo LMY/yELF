@@ -189,8 +189,8 @@ public class PanelCurrentCorrel extends PanelYEM
 		});
 		east.add(xlsButton, BorderLayout.SOUTH);
 		
-		masterDB = new CurrentElfDb();
-		filteredDB = new CurrentElfDb();
+		masterDB = null;
+		filteredDB = null;
 	}
 
 	

@@ -2,6 +2,7 @@ package y.elf;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -120,6 +121,10 @@ public class CurrentDb extends MeasurementDb {
 	}
 
 	public CurrentDb filter(DateTime from, DateTime to) {
+		return filter(from, to, getPeriodDivision(), getOperationPerformed());
+	}
+	
+	public CurrentDb filter(DateTime from, DateTime to, PeriodType periodCut, DataFunction operation) {
 		List<CurrentValue> newvalues = new ArrayList<CurrentValue>();
 
 		for (int i=0, imax=rawData.size(); i<imax; i++) {
@@ -130,9 +135,9 @@ public class CurrentDb extends MeasurementDb {
 				newvalues.add(value);
 		}
 
-		final CurrentDb newdb = new CurrentDb();						// create new db
+		final CurrentDb newdb = new CurrentDb();					// create new db
 		newdb.rawData = newvalues;									// assign raw values
-		newdb.perform(getPeriodDivision(), getOperationPerformed());	// perform same operation
+		newdb.perform(periodCut, operation);						// perform same operation
 		return newdb;
 	}
 	
@@ -155,5 +160,23 @@ public class CurrentDb extends MeasurementDb {
 	
 	public CurrentValue[][] getSampledData() {
 		return sampledData;
+	}
+	
+	public CurrentValue getSelectedCurrentValue(Comparator<CurrentValue> comparator) {
+		CurrentValue ret = null;
+		
+		if (rawData != null && !rawData.isEmpty()) {
+			for (CurrentValue e : rawData)
+				if (ret == null || comparator.compare(e, ret) > 1)
+					ret = e;
+		}
+		else
+			if (sampledData != null)
+				for (int y=0; y<sampledData.length; y++)
+					for (int x=0; x<sampledData[y].length; x++)
+						if (ret == null || comparator.compare(sampledData[y][x], ret) > 1)
+							ret = sampledData[y][x];
+		
+		return ret;
 	}
 }

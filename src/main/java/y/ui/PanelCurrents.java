@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
@@ -18,16 +19,23 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.AbstractTableModel;
 
 import org.joda.time.DateTime;
 
 import y.elf.CurrentDb;
+import y.elf.CurrentValue;
+import y.elf.MeasurementValue;
+import y.elf.MeasurementDb.PeriodType;
+import y.elf.datafunctions.AverageFunction;
+import y.elf.datafunctions.DataFunction;
 import y.utils.Config;
 import y.utils.Utils;
 
@@ -50,6 +58,9 @@ public class PanelCurrents  extends PanelYEM {
 	private JButton selAll;
 	private JButton selNone;
 	private JButton selAuto;
+	
+	private String[] columnNames;
+	private JTable table;
 	
 	public PanelCurrents()
 	{
@@ -96,12 +107,18 @@ public class PanelCurrents  extends PanelYEM {
 
 		daSpinner = PanelELF.createDateSpinner();
 		aSpinner = PanelELF.createDateSpinner();
-		comboPeriod = new JComboBox<String>(new String[] { Config.getResource("ItemFromTo"), Config.getResource("ItemDaily"), Config.getResource("ItemMonthly"), Config.getResource("ItemYearly")});
+		comboPeriod = new JComboBox<String>(new String[] { Config.getResource("ItemDaily"), Config.getResource("ItemWeekly"), Config.getResource("ItemMonthly"), Config.getResource("ItemYearly")});
+		comboPeriod.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				applyFilters();
+			}
+		});
+		
 		daSpinner.addChangeListener(cl);
 		aSpinner.addChangeListener(cl);
 
 		this.setLayout(new GridLayout(0,2));
-
 		
 		
 		JPanel westUp = new JPanel();
@@ -112,8 +129,6 @@ public class PanelCurrents  extends PanelYEM {
 		westUpN.setLayout(new BorderLayout());
 		JPanel westUpS = new JPanel();
 		westUpS.setLayout(new BorderLayout());
-		
-
 		
 		folderText = new JTextField();
 		folderText.setEditable(false);
@@ -225,6 +240,18 @@ public class PanelCurrents  extends PanelYEM {
 		eastS.add(graphButton);
 		east.add(eastS, BorderLayout.SOUTH);
 		
+		columnNames = Config.getInstance().getDataColumnNames();
+		table = new JTable(new Object[0][0], columnNames);
+		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table.setRowSelectionAllowed(true);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		for (int i=0; i<table.getColumnCount(); i++)
+			Utils.jtable_adjustColumnSizes(table, i, 1);
+		Utils.jtable_adjustRowSizes(table);
+		JScrollPane tableScroller = new JScrollPane(table);
+		east.add(tableScroller, BorderLayout.CENTER);
+		
 		masterDB = null;
 		filteredDB = null;
 	}
@@ -242,39 +269,130 @@ public class PanelCurrents  extends PanelYEM {
 		
 		final Config config = Config.getInstance();
 		
-		masterDB = CurrentDb.load(curFilelist.getSelectedFilenames(), config.getCurrentValuefieldn(), config);
-		
-		if (masterDB.size() == 0)
+		final CurrentDb newdb = CurrentDb.load(curFilelist.getSelectedFilenames(), config.getCurrentValuefieldn(), config);
+		if (newdb.size() == 0)
 			Utils.MessageBox(Config.getResource("MsgEmptyDbAfterRead"), Config.getResource("TitleWarning"));
 		
-		// non chiamare MAI .match() su masterDB!
-		if (masterDB == null) return;		
-		filtersEnabled = false;
-		daSpinner.setValue(masterDB.getStartDate().toDate());
-		aSpinner.setValue(masterDB.getEndDate().toDate());
-		filtersEnabled = true;
-		applyFilters();
+		if (newdb != null) {
+			filteredDB = masterDB = null; // prevent change listeners from fire events
+			try { daSpinner.setValue(newdb.getStartDate().toDate()); } catch (Exception e) {}
+			try { aSpinner.setValue(newdb.getEndDate().toDate()); } catch (Exception e) {}
+			filteredDB = masterDB = newdb;
+			applyFilters();
+//			refreshTable();
+		}
+	}
+	
+	private PeriodType getPeriodType() {
+		final String selectedText = (String) comboPeriod.getSelectedItem();
+		if (selectedText == null)
+			return PeriodType.DAILY;
+		else if (selectedText.equals(Config.getResource("ItemFromTo")))
+			return PeriodType.DAILY;
+		else if (selectedText.equals(Config.getResource("ItemDaily")))
+			return PeriodType.DAILY;
+		else if (selectedText.equals(Config.getResource("ItemWeekly")))
+			return PeriodType.WEEKLY;
+		else if (selectedText.equals(Config.getResource("ItemMonthly")))
+			return PeriodType.MONTHLY;
+		else if (selectedText.equals(Config.getResource("ItemYearly")))
+			return PeriodType.YEARLY;
+		
+		return PeriodType.DAILY; // unreachable
+	}
+	
+	private DataFunction getOperationCurrent() {
+//		return Config.getInstance().getOperationCurrents();
+		return new AverageFunction();
 	}
 	
 	
-	private boolean filtersEnabled = true;
-	
 	private synchronized void applyFilters() {
-		if (filtersEnabled && masterDB != null)
+		if (masterDB != null)
 			try {
 				final DateTime from = new DateTime((Date) daSpinner.getValue());
 				final DateTime to = new DateTime((Date) aSpinner.getValue());
-				filteredDB = masterDB.filter(from, to);
-				refreshData();
+				
+				filteredDB = masterDB.filter(from, to,getPeriodType(), getOperationCurrent());	// apply last division/performed operation
+				refreshTable();
 			}
 			catch (Exception e) {}
 	}
 	
-	private void refreshData()
+	private void refreshTable()
 	{
-		// TODO : caricare i dati da filteredDB
+		table.setModel(new TableModelCurrents(filteredDB));
+		table.clearSelection();
+		
+		boolean[] valuevalid = filteredDB.getOpValid();
+		
+		for (int i=0; i<valuevalid.length+2; i++)
+			if (i >= valuevalid.length || valuevalid[i])
+				table.addRowSelectionInterval(i, i);
 	}
 	
+	public class TableModelCurrents extends AbstractTableModel
+	{
+		private static final long serialVersionUID = 7804380016977209351L;
+	    private Object[][] data;
+	    
+	    public TableModelCurrents(CurrentDb db)
+	    {
+	    	final DateTime[] times = db.getPeriods();
+	    	final int[] mediane = db.getOpValues();
+	    	final int[] maxs = db.getOpMaxDay();
+	    	final int[] count = db.getOpValueCount();
+	    	
+	    	this.data = new Object[times.length+2][];
+	    	
+	    	for (int i=0; i<times.length; i++) {
+	    		data[i] = new Object[4];
+	    		data[i][0] = Utils.toDateString(times[i]);
+	    		data[i][1] = ((double)mediane[i]/100);
+	    		data[i][2] = ((double)maxs[i]/100);
+	    		data[i][3] = count[i];
+	    	}
+	    	
+	    	final int maxi = db.getMaxidx();
+	    	data[data.length-2] = new Object[4];
+	    	data[data.length-2][0] = Config.getResource("MsgMax")+"("+db.getOperationPerformed().getName()+") - "+Utils.toDateString(times[maxi]);
+    		data[data.length-2][1] = MeasurementValue.valueIntToDouble(mediane[maxi]);
+    		data[data.length-2][2] = MeasurementValue.valueIntToDouble(maxs[maxi]);
+    		data[data.length-2][3] = count[maxi];
+
+    		final CurrentValue maxvalue = db.getSelectedCurrentValue(new Comparator<CurrentValue>() {
+				@Override
+				public int compare(CurrentValue o1, CurrentValue o2) {
+					return o1.getValue()-o2.getValue();
+				}
+    		});
+	    	data[data.length-1] = new Object[4];
+	    	data[data.length-1][0] = Config.getResource("MsgMax")+"("+Utils.toDateString(maxvalue.getTime())+")";
+    		data[data.length-1][1] = MeasurementValue.valueIntToDouble(maxvalue.getValue());
+    		data[data.length-1][2] = "";
+    		data[data.length-1][3] = 1;
+	    }
+	    
+	    public int getColumnCount() 
+	    {
+	        return columnNames.length;
+	    }
+	    public String getColumnName(int column) 
+	    {
+	        return columnNames[column];
+	    }
+	    public int getRowCount() 
+	    {
+	        return data.length;
+	    }
+	    public Object getValueAt( int row, int column ) 
+	    {
+	        return data[row][column];
+	    }
+	    
+	    public boolean isCellEditable(int row, int col)
+        { return false; }
+	}
 	
 	public void exportXLS()
 	{
