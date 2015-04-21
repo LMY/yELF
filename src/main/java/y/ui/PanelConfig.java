@@ -204,7 +204,7 @@ public class PanelConfig extends JPanel
 		for (int i=0; i<srbSeries.getColumnCount(); i++)
 			Utils.jtable_adjustColumnSizes(srbSeries, i, 1);
 		Utils.jtable_adjustRowSizes(srbSeries);
-		srbSeries.setModel(new TableModel(Config.getInstance().getConst_values().get("srb")));
+		srbSeries.setModel(new TableModel(Config.getInstance().getConst_value("srb")));
 		srbSeries.clearSelection();
 		srbSeries.setDefaultEditor(Color.class, new ColorEditor());
 		
@@ -218,7 +218,7 @@ public class PanelConfig extends JPanel
 		for (int i=0; i<emSeries.getColumnCount(); i++)
 			Utils.jtable_adjustColumnSizes(emSeries, i, 1);
 		Utils.jtable_adjustRowSizes(emSeries);		
-		emSeries.setModel(new TableModel(Config.getInstance().getConst_values().get("elf")));
+		emSeries.setModel(new TableModel(Config.getInstance().getConst_value("elf")));
 		emSeries.clearSelection();
 		emSeries.setDefaultEditor(Color.class, new ColorEditor());
 		

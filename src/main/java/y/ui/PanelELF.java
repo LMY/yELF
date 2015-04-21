@@ -300,6 +300,6 @@ public class PanelELF extends PanelYEM
 		final DateTime to = new DateTime((Date) aSpinner.getValue());
 	
 		return ChartHelperELF.saveData(path, filteredValues.getSampledData(), filteredValues.getOpValues(), filteredValues.getOpValid(), filteredValues.getMaxidx(), from, to,
-				Config.getInstance(), Config.getInstance().getConst_values().get("elf"));
+				Config.getInstance(), Config.getInstance().getConst_value("elf"));
 	}
 }

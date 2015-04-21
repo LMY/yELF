@@ -173,11 +173,18 @@ public class Config
 		return em;
 	}
 	
+	public static ArrayList<ConfigSerie> createDefaultConstValuesCurrents()
+	{
+		ArrayList<ConfigSerie> cur = new ArrayList<ConfigSerie>();
+		return cur;
+	}
+	
 	private void loadDefaultConstValues()
 	{
 		const_values = new HashMap<String, ArrayList<ConfigSerie>>();
 		const_values.put("elf", createDefaultConstValuesELF());
 		const_values.put("srb", createDefaultConstValuesSRB());
+		const_values.put("cur", createDefaultConstValuesCurrents());
 	}
 	
 	public boolean Load() { return Load(DEFAULT_CONF_FILENAME); }
@@ -445,9 +452,19 @@ public class Config
 	public void setInstrumentLowSRB(int instrumentLowSRB) {
 		this.instrumentLowSRB = instrumentLowSRB;
 	}
-	public Map<String, ArrayList<ConfigSerie>> getConst_values() {
-		return const_values;
+	public ArrayList<ConfigSerie> getConst_value(String name) {
+		ArrayList<ConfigSerie> ret = const_values.get(name);
+		if (ret != null)
+			return ret;
+		else {
+			ret = new ArrayList<ConfigSerie>();
+			const_values.put(name, ret);
+			return ret;
+		}
 	}
+//	public Map<String, ArrayList<ConfigSerie>> getConst_values() {
+//		return const_values;
+//	}
 	public int getElfValuefieldn() {
 		return elfValuefieldn;
 	}

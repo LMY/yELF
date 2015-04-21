@@ -300,6 +300,6 @@ public class PanelSRB extends PanelYEM
 		final DateTime to = new DateTime((Date) aSpinner.getValue());
 	
 		return ChartHelperSRB.saveData(path, filteredValues.getSampledData(), filteredValues.getOpValues(), filteredValues.getOpValid(), filteredValues.getMaxidx(), from, to,
-				Config.getInstance(), Config.getInstance().getConst_values().get("srb"));
+				Config.getInstance(), Config.getInstance().getConst_value("srb"));
 	}
 }
