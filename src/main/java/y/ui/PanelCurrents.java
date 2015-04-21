@@ -34,8 +34,6 @@ import y.elf.CurrentDb;
 import y.elf.CurrentValue;
 import y.elf.MeasurementValue;
 import y.elf.MeasurementDb.PeriodType;
-import y.elf.datafunctions.AverageFunction;
-import y.elf.datafunctions.DataFunction;
 import y.utils.Config;
 import y.utils.Utils;
 
@@ -301,11 +299,6 @@ public class PanelCurrents  extends PanelYEM {
 		return PeriodType.DAILY; // unreachable
 	}
 	
-	private DataFunction getOperationCurrent() {
-//		return Config.getInstance().getOperationCurrents();
-		return new AverageFunction();
-	}
-	
 	
 	private synchronized void applyFilters() {
 		if (masterDB != null)
@@ -313,7 +306,7 @@ public class PanelCurrents  extends PanelYEM {
 				final DateTime from = new DateTime((Date) daSpinner.getValue());
 				final DateTime to = new DateTime((Date) aSpinner.getValue());
 				
-				filteredDB = masterDB.filter(from, to,getPeriodType(), getOperationCurrent());	// apply last division/performed operation
+				filteredDB = masterDB.filter(from, to,getPeriodType(), Config.getInstance().getOperationCurrent());	// apply last division/performed operation
 				refreshTable();
 			}
 			catch (Exception e) {}

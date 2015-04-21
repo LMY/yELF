@@ -94,6 +94,7 @@ public class Config
 	
 	private DataFunction operationSRB;
 	private DataFunction operationELF;
+	private DataFunction operationCurrent;
 	
 	private FilterFunction filterSRB;
 	private FilterFunction filterELF;
@@ -132,6 +133,7 @@ public class Config
 		
 		operationSRB = new RmsFunction();
 		operationELF = new MedianaFunction();
+		operationCurrent = new MedianaFunction();
 		
 		filterSRB = new FilterFunctionRemoveDuplicates();
 		filterELF = new FilterFunctionRemoveDuplicates();
@@ -272,6 +274,8 @@ public class Config
 					operationSRB = DataFunction.create(arg);
 				else if (command.equals("operationELF"))
 					operationELF = DataFunction.create(arg);
+				else if (command.equals("operationCurrent"))
+					operationCurrent  = DataFunction.create(arg);
 				
 				else if (command.equals("filterSRB"))
 					filterSRB = FilterFunction.create(arg);
@@ -333,6 +337,7 @@ public class Config
 			
 			bf.write("operationELF: " + operationELF.getKey() + "\n");
 			bf.write("operationSRB: " + operationSRB.getKey() + "\n");
+			bf.write("operationCurrent: " + operationCurrent.getKey() + "\n");
 			
 			bf.write("filterELF: " + filterELF.getKey() + "\n");
 			bf.write("filterSRB: " + filterSRB.getKey() + "\n");
@@ -549,5 +554,12 @@ public class Config
 	public void setWorkingFolder(String workingFolder) {
 		this.workingFolder = workingFolder;
 	}
-	
+
+	public DataFunction getOperationCurrent() {
+		return operationCurrent;
+	}
+
+	public void setOperationCurrent(DataFunction operationCurrent) {
+		this.operationCurrent = operationCurrent;
+	}
 }

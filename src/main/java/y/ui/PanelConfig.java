@@ -107,6 +107,7 @@ public class PanelConfig extends JPanel
 	
 	private JComboBox<String> comboOpSRB;
 	private JComboBox<String> comboOpELF;
+	private JComboBox<String> comboOpCurrent;
 	
 	private JComboBox<String> comboFilterSRB;
 	private JComboBox<String> comboFilterELF;
@@ -143,6 +144,7 @@ public class PanelConfig extends JPanel
 		
 		comboOpSRB = new JComboBox<String>(DataFunction.getNames());
 		comboOpELF = new JComboBox<String>(DataFunction.getNames());
+		comboOpCurrent = new JComboBox<String>(DataFunction.getNames());
 		
 		comboFilterSRB = new JComboBox<String>(FilterFunction.getNames());
 		comboFilterELF = new JComboBox<String>(FilterFunction.getNames());
@@ -403,19 +405,17 @@ public class PanelConfig extends JPanel
 		t2up.add(instrumentLowELF);
 		t2up.add(new JLabel(" "+Config.getResource("TitleELFFilterFunction")));
 		t2up.add(comboFilterELF);
-		t2up.add(new JLabel(" "+Config.getResource("TitleOperationTypeELF")));
+		t2up.add(new JLabel(" "+Config.getResource("TitleOperationTypeCurrent")));
 		t2up.add(comboOpELF);
 		elfTab.add(t2up, BorderLayout.NORTH);
-		
 		
 		currentTab.setLayout(new GridLayout(0, 2));
 		currentTab.add(new JLabel(" "+Config.getResource("TitleCurrentFieldn")));
 		currentTab.add(currentValueFieldn);
 		currentTab.add(new JLabel(" "+Config.getResource("TitleCurrentFilterFunction")));
 		currentTab.add(comboFilterCurrent);
-
-		
-		
+		currentTab.add(new JLabel(" "+Config.getResource("TitleCurrentFilterFunction")));
+		currentTab.add(comboOpCurrent);
 		
 		JPanel btnPanel = new JPanel();
 		btnPanel.setLayout(new GridLayout(1, 2));
@@ -663,6 +663,7 @@ public class PanelConfig extends JPanel
 
 		conf.setOperationELF(DataFunction.createFromName((String)comboOpELF.getSelectedItem()));
 		conf.setOperationSRB(DataFunction.createFromName((String)comboOpSRB.getSelectedItem()));
+		conf.setOperationCurrent(DataFunction.createFromName((String)comboOpCurrent.getSelectedItem()));
 		
 		conf.setFilterELF(FilterFunction.createFromName((String)comboFilterELF.getSelectedItem()));
 		conf.setFilterSRB(FilterFunction.createFromName((String)comboFilterSRB.getSelectedItem()));
@@ -709,6 +710,7 @@ public class PanelConfig extends JPanel
 		
 		comboOpSRB.setSelectedItem(conf.getOperationSRB().getName());
 		comboOpELF.setSelectedItem(conf.getOperationELF().getName());
+		comboOpCurrent.setSelectedItem(conf.getOperationCurrent().getName());
 		
 		comboFilterSRB.setSelectedItem(conf.getFilterSRB().getName());
 		comboFilterELF.setSelectedItem(conf.getFilterELF().getName());
