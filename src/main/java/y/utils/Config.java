@@ -149,7 +149,7 @@ public class Config
 	}
 	
 	
-	public static ArrayList<ConfigSerie> createDefaultConstValuesSRB()
+	private static ArrayList<ConfigSerie> createDefaultConstValuesSRB()
 	{
 		ArrayList<ConfigSerie> srb = new ArrayList<ConfigSerie>();
 		srb.add(new ConfigSerie("valore di attenzione", ElfValue.valueDoubleToInt(6.0), Color.red, ConfigSerie.USAGES_LIMIT1, true, 0));
@@ -161,7 +161,7 @@ public class Config
 		return srb;
 	}
 	
-	public static ArrayList<ConfigSerie> createDefaultConstValuesELF()
+	private static ArrayList<ConfigSerie> createDefaultConstValuesELF()
 	{
 		ArrayList<ConfigSerie> em = new ArrayList<ConfigSerie>();
 		em.add(new ConfigSerie("valore di attenzione", ElfValue.valueDoubleToInt(10.0), Color.red, ConfigSerie.USAGES_LIMIT1, true, 0));
@@ -173,11 +173,37 @@ public class Config
 		return em;
 	}
 	
-	public static ArrayList<ConfigSerie> createDefaultConstValuesCurrents()
+	private static ArrayList<ConfigSerie> createDefaultConstValuesCurrents()
 	{
 		ArrayList<ConfigSerie> cur = new ArrayList<ConfigSerie>();
+		cur.add(new ConfigSerie("valori misurati", 0, Color.blue, ConfigSerie.USAGES_VALUE, true, 0));
+		cur.add(new ConfigSerie("sensibilità strumentale", ElfValue.valueDoubleToInt(0.10), Color.cyan, ConfigSerie.USAGES_LOW, true, 0));
+		cur.add(new ConfigSerie("mediana periodo", 0, Color.green, ConfigSerie.USAGES_DATADAY, true, 0));
+		cur.add(new ConfigSerie("mediana massima", 0, Color.pink, ConfigSerie.USAGES_DATAMAX, true, 0));
 		return cur;
 	}
+	
+	public ArrayList<ConfigSerie> restoreDefaultConstValuesELF()
+	{	
+		final ArrayList<ConfigSerie> defaults = createDefaultConstValuesELF();
+		const_values.put("elf", defaults);
+		return defaults;		
+	}
+	
+	public ArrayList<ConfigSerie> restoreDefaultConstValuesSRB()
+	{	
+		final ArrayList<ConfigSerie> defaults = createDefaultConstValuesSRB();
+		const_values.put("srb", defaults);
+		return defaults;		
+	}
+	
+	public ArrayList<ConfigSerie> restoreDefaultConstValuesCurrents()
+	{	
+		final ArrayList<ConfigSerie> defaults = createDefaultConstValuesCurrents();
+		const_values.put("cur", defaults);
+		return defaults;		
+	}
+	
 	
 	private void loadDefaultConstValues()
 	{

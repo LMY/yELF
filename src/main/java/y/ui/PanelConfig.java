@@ -104,6 +104,7 @@ public class PanelConfig extends JPanel
 	
 	private JTable srbSeries;
 	private JTable emSeries;
+	private JTable curSeries;
 	
 	private JComboBox<String> comboOpSRB;
 	private JComboBox<String> comboOpELF;
@@ -222,8 +223,25 @@ public class PanelConfig extends JPanel
 		emSeries.clearSelection();
 		emSeries.setDefaultEditor(Color.class, new ColorEditor());
 		
+		
+		curSeries = new JTable(new Object[0][0], configColumnNames) {
+			private static final long serialVersionUID = 123456787L;
+			public TableCellRenderer getCellRenderer(int row, int column) { return column==1 ? weirdRenderer : super.getCellRenderer(row, column); }
+		};
+		curSeries.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		curSeries.setRowSelectionAllowed(true);
+		curSeries.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		for (int i=0; i<curSeries.getColumnCount(); i++)
+			Utils.jtable_adjustColumnSizes(curSeries, i, 1);
+		Utils.jtable_adjustRowSizes(curSeries);		
+		curSeries.setModel(new TableModel(Config.getInstance().getConst_value("cur")));
+		curSeries.clearSelection();
+		curSeries.setDefaultEditor(Color.class, new ColorEditor());
+		
 		setColumnAsConfigSerieUsages(srbSeries, 2);
 		setColumnAsConfigSerieUsages(emSeries, 2);
+		setColumnAsConfigSerieUsages(curSeries, 2);
+		
 		
 		generalTab.add(new JLabel(" "+Config.getResource("TitleLanguage")));
 		generalTab.add(comboLanguage);
@@ -315,7 +333,7 @@ public class PanelConfig extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (Utils.MessageBoxYesNo(null, Config.getResource("MsgRestoreSRBDefaults"), Config.getResource("TitleRestoreSRBDefaults")))
-					srbSeries.setModel(new TableModel(Config.createDefaultConstValuesSRB()) );
+					srbSeries.setModel(new TableModel(Config.getInstance().restoreDefaultConstValuesSRB()) );
 			}
 		});
 		JPanel t1x = new JPanel();
@@ -385,7 +403,7 @@ public class PanelConfig extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (Utils.MessageBoxYesNo(null, Config.getResource("MsgRestoreELFDefaults"), Config.getResource("TitleRestoreELFDefaults")))
-					emSeries.setModel(new TableModel(Config.createDefaultConstValuesELF()) );
+					emSeries.setModel(new TableModel(Config.getInstance().restoreDefaultConstValuesELF()) );
 			}
 		});
 		JPanel t2x = new JPanel();
@@ -409,13 +427,75 @@ public class PanelConfig extends JPanel
 		t2up.add(comboOpELF);
 		elfTab.add(t2up, BorderLayout.NORTH);
 		
-		currentTab.setLayout(new GridLayout(0, 2));
-		currentTab.add(new JLabel(" "+Config.getResource("TitleCurrentFieldn")));
-		currentTab.add(currentValueFieldn);
-		currentTab.add(new JLabel(" "+Config.getResource("TitleCurrentFilterFunction")));
-		currentTab.add(comboFilterCurrent);
-		currentTab.add(new JLabel(" "+Config.getResource("TitleCurrentFilterFunction")));
-		currentTab.add(comboOpCurrent);
+		
+		currentTab.setLayout(new BorderLayout());
+		
+		JPanel curUp = new JPanel();
+		curUp.setLayout(new GridLayout(0, 2));
+		curUp.add(new JLabel(" "+Config.getResource("TitleCurrentFieldn")));
+		curUp.add(currentValueFieldn);
+		curUp.add(new JLabel(" "+Config.getResource("TitleCurrentFilterFunction")));
+		curUp.add(comboFilterCurrent);
+		curUp.add(new JLabel(" "+Config.getResource("TitleCurrentFilterFunction")));
+		curUp.add(comboOpCurrent);
+		
+		currentTab.add(curUp, BorderLayout.NORTH);
+		currentTab.add(curSeries/*new JScrollPane(curSeries)*/, BorderLayout.CENTER);
+		currentTab.setBorder(BorderFactory.createTitledBorder(Config.getResource("TitleSerieCurrent")));
+		
+		
+		JButton curBnew = new JButton(Config.getResource("MsgAdd"));
+		curBnew.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				((TableModel)curSeries.getModel()).newLine();
+			}
+		});
+		JButton curBup = new JButton(Config.getResource("MsgUp"));
+		curBup.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				final int[] selected = curSeries.getSelectedRows();
+				((TableModel)curSeries.getModel()).move( selected, true );
+				if (selected.length > 0)
+					curSeries.setRowSelectionInterval(selected[selected.length-1]-1, selected[selected.length-1]-1);
+			}
+		});		
+		JButton curBdown = new JButton(Config.getResource("MsgDown"));
+		curBdown.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				final int[] selected = curSeries.getSelectedRows();
+				((TableModel)curSeries.getModel()).move( selected, false );
+				if (selected.length > 0)
+					curSeries.setRowSelectionInterval(selected[selected.length-1]+1, selected[selected.length-1]+1);
+			}
+		});		
+		JButton curBdel = new JButton(Config.getResource("MsgDel"));
+		curBdel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				((TableModel)curSeries.getModel()).delLines( curSeries.getSelectedRows() );
+			}
+		});
+		JButton curDefault = new JButton(Config.getResource("MsgRestoreDefaults"));
+		curDefault.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (Utils.MessageBoxYesNo(null, Config.getResource("MsgRestoreCurDefaults"), Config.getResource("TitleRestoreCurDefaults")))
+					curSeries.setModel(new TableModel(Config.getInstance().restoreDefaultConstValuesCurrents()) );
+			}
+		});
+		JPanel t3x = new JPanel();
+		t3x.setLayout(new FlowLayout());
+		t3x.add(curBnew);
+		t3x.add(curBup);
+		t3x.add(curBdown);
+		t3x.add(curBdel);
+		t3x.add(curDefault);
+		currentTab.add(t3x, BorderLayout.SOUTH);
+		
+		
 		
 		JPanel btnPanel = new JPanel();
 		btnPanel.setLayout(new GridLayout(1, 2));

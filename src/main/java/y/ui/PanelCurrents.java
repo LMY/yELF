@@ -34,6 +34,7 @@ import y.elf.CurrentDb;
 import y.elf.CurrentValue;
 import y.elf.MeasurementValue;
 import y.elf.MeasurementDb.PeriodType;
+import y.graphs.ChartHelperCurrents;
 import y.graphs.XLSHelper;
 import y.utils.Config;
 import y.utils.Utils;
@@ -387,26 +388,6 @@ public class PanelCurrents  extends PanelYEM {
         { return false; }
 	}
 	
-	public boolean exportXLS()
-	{
-		if (filteredDB == null)
-			return false;
-		
-		String path = Utils.saveFileDialog(Config.getResource("MsgWhereToSaveData"), this, Config.getResource("MsgSelectFile"), "xlsx");
-		if (path.isEmpty())
-			return false;
-		if (!path.contains("."))
-			path += ".xlsx";
-		
-		return XLSHelper.saveCurrentsData(path, filteredDB, false);
-	}
-	
-	public void exportGraph()
-	{
-
-	}
-
-	
 	public class FileBrowserList extends JPanel
 	{
 		private static final long serialVersionUID = -4154283294966066872L;
@@ -513,4 +494,38 @@ public class PanelCurrents  extends PanelYEM {
 	public PanelType getType() {
 		return PanelType.Corrente;
 	}
+	
+	
+	public boolean exportXLS()
+	{
+		if (filteredDB == null)
+			return false;
+		
+		String path = Utils.saveFileDialog(Config.getResource("MsgWhereToSaveData"), this, Config.getResource("MsgSelectFile"), "xlsx");
+		if (path.isEmpty())
+			return false;
+		if (!path.contains("."))
+			path += ".xlsx";
+		
+		return XLSHelper.saveCurrentsData(path, filteredDB, false);
+	}
+	
+	public boolean exportGraph()
+	{
+		if (filteredDB == null)
+			return false;
+
+		String path = Utils.saveFileDialog(Config.getResource("MsgWhereToSaveImage"), this, Config.getResource("MsgSelectFile"), "png");
+		if (path.isEmpty())
+			return false;
+		if (!path.contains("."))
+			path += ".png";
+		
+		final DateTime from = new DateTime((Date) daSpinner.getValue());
+		final DateTime to = new DateTime((Date) aSpinner.getValue());
+	
+		return ChartHelperCurrents.saveData(path, filteredDB.getSampledData(), filteredDB.getOpValues(), filteredDB.getOpValid(), filteredDB.getMaxidx(), from, to,
+				Config.getInstance(), Config.getInstance().getConst_value("cur"));
+	}
+
 }
