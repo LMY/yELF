@@ -51,6 +51,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import org.joda.time.DateTime;
 
+import y.elf.CurrentDb;
 import y.elf.CurrentElfDb;
 import y.elf.CurrentValue;
 import y.elf.ElfDb;
@@ -309,7 +310,7 @@ public class XLSHelper
 		}
 	}
 	
-	public static void saveCorrenti(String filename, CurrentElfDb db, final double imax, final double ui, final double ub) throws IOException {
+	public static void saveCorrelationsCurrents(String filename, CurrentElfDb db, final double imax, final double ui, final double ub) throws IOException {
 		
 		if (Utils.abortOnExistingAndDontOverwrite(filename))
 			return;
@@ -551,5 +552,217 @@ public class XLSHelper
 	    wb.write(fileOut);
 	    wb.close();
 	    fileOut.close();
+	}
+	
+	
+	
+	
+	public static boolean saveCurrentsData(String filename, CurrentDb db, boolean save_grafico)
+	{
+		final DateTime[] times = db.getPeriods();
+		final CurrentValue[][] dayvalues = db.getSampledData();
+		final int[] mediane = db.getOpValues();
+		final int[] maxs = db.getOpMaxDay();
+		final int[] counts = db.getOpValueCount();
+		
+		Workbook wb = null;
+		
+		try {
+			if (Utils.abortOnExistingAndDontOverwrite(filename))
+				return false;
+			
+			final int maxi = getIndexOfMax(mediane);
+			
+		    wb = new XSSFWorkbook();
+		    
+		    CreationHelper createHelper = wb.getCreationHelper();
+		    Sheet sheet = wb.createSheet(Config.getResource("TitleStats"));
+
+		    int rown = 0;
+		    Row row = sheet.createRow(rown++);
+		    Cell cell = row.createCell(0);
+		    cell.setCellValue(Config.getResource("TitleDate"));
+		    cell = row.createCell(1);
+		    cell.setCellValue(Config.getResource("TitleMediana"));
+		    cell = row.createCell(2);
+		    cell.setCellValue(Config.getResource("TitleMaxM"));
+		    cell = row.createCell(3);
+		    cell.setCellValue(Config.getResource("TitleNumberOfData"));
+		    
+		    CellStyle dateStyle1 = wb.createCellStyle();
+		    dateStyle1.setDataFormat(createHelper.createDataFormat().getFormat("d/m/yy"));
+		    CellStyle doubleFormat1 = wb.createCellStyle();
+		    DataFormat format1 = wb.createDataFormat();
+		    doubleFormat1.setDataFormat(format1.getFormat("0.00"));
+		    
+		    
+		    for (int i=0; i<mediane.length; i++) {
+		    	row = sheet.createRow(rown++);
+		    	
+		    	cell = row.createCell(0);
+			    cell.setCellStyle(dateStyle1);
+			    cell.setCellValue(Utils.toDateString(dayvalues[i][0].getTime()));
+			    
+			    cell = row.createCell(1);
+			    cell.setCellStyle(doubleFormat1);
+			    cell.setCellValue(ElfValue.valueIntToDouble(mediane[i]));
+			    
+			    cell = row.createCell(2);
+			    cell.setCellStyle(doubleFormat1);
+			    cell.setCellValue(ElfValue.valueIntToDouble(maxs[i]));
+			    
+			    cell = row.createCell(3);
+			    cell.setCellValue(counts[i]);
+		    }
+		    
+		    // line with DataFunction max
+		    row = sheet.createRow(rown++);
+		    row = sheet.createRow(rown++);
+		    cell = row.createCell(0);
+		    cell.setCellValue(Config.getResource("MsgMax")+"("+db.getOperationPerformed().getName()+") - "+Utils.toDateString(times[maxi]));
+		    
+		    cell = row.createCell(1);
+		    cell.setCellStyle(doubleFormat1);
+		    cell.setCellValue(ElfValue.valueIntToDouble(mediane[maxi]));
+		    
+		    cell = row.createCell(2);
+		    cell.setCellStyle(doubleFormat1);
+		    cell.setCellValue(ElfValue.valueIntToDouble(maxs[maxi]));
+		    
+		    cell = row.createCell(3);
+		    cell.setCellValue(counts[maxi]);
+		    
+		    
+		    // line with max
+    		final CurrentValue maxvalue = db.getSelectedCurrentValue(new Comparator<CurrentValue>() {
+				@Override
+				public int compare(CurrentValue o1, CurrentValue o2) {
+					return o1.getValue()-o2.getValue();
+				}
+    		});
+		    row = sheet.createRow(rown++);
+		    cell = row.createCell(0);
+		    cell.setCellValue(Config.getResource("MsgMax")+"("+Utils.toDateString(maxvalue.getTime())+")");
+		    
+		    cell = row.createCell(1);
+		    cell.setCellStyle(doubleFormat1);
+		    cell.setCellValue(MeasurementValue.valueIntToDouble(maxvalue.getValue()));
+		    
+		    cell = row.createCell(2);
+		    cell.setCellStyle(doubleFormat1);
+		    cell.setCellValue("");
+		    
+		    cell = row.createCell(3);
+		    cell.setCellValue(counts[maxi]);		    
+		    
+		    
+		    // sheet containing all raw data
+		    Sheet sheetdata = wb.createSheet(Config.getResource("TitleSheetDatas"));
+		    CellStyle dateTimeStyle2 = wb.createCellStyle();
+		    dateTimeStyle2.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
+
+		    CellStyle doubleFormat2 = wb.createCellStyle();
+		    DataFormat format2 = wb.createDataFormat();
+		    doubleFormat2.setDataFormat(format2.getFormat("0.00"));
+		    
+		    rown = 0;
+		    row = sheetdata.createRow(rown++);
+		    cell = row.createCell(0);
+		    cell.setCellValue(Config.getResource("TitleDate"));
+		    cell = row.createCell(1);
+		    cell.setCellValue(Config.getResource("TitleValue"));
+		    cell = row.createCell(2);
+		    cell.setCellValue(Config.getResource("TitlePeak"));
+		    cell = row.createCell(3);
+		    cell.setCellValue(Config.getResource("TitleMediana"));
+		    cell = row.createCell(4);
+		    cell.setCellValue(Config.getResource("TitleDayMax"));
+		    cell = row.createCell(5);
+		    cell.setCellValue(Config.getResource("TitleMedianaMax"));
+		    
+		    for (int i=0; i<dayvalues.length; i++) {
+		    	final CurrentValue[] day = dayvalues[i];
+
+		    	for (int k=0; k<day.length; k++) {
+		    		final CurrentValue value = day[k];
+		    		final DateTime time = value.getTime();
+		    		
+		    		row = sheetdata.createRow(rown++);
+		    		cell = row.createCell(0);
+		    		cell.setCellStyle(dateTimeStyle2);
+		    		cell.setCellValue(Utils.toDateString(time));
+		    		
+		    		cell = row.createCell(1);
+		    		cell.setCellStyle(doubleFormat2);
+		    		
+	    			cell.setCellValue(ElfValue.valueIntToDouble(value.getValue()));
+		    		
+		    		cell = row.createCell(2);
+//		    		cell.setCellStyle(doubleFormat2);
+	    			cell.setCellValue("");
+
+		    		cell = row.createCell(3);
+		    		cell.setCellStyle(doubleFormat2);
+		    		cell.setCellValue(ElfValue.valueIntToDouble(mediane[i]));
+		    		
+		    		cell = row.createCell(4);
+		    		cell.setCellStyle(doubleFormat2);
+		    		cell.setCellValue(ElfValue.valueIntToDouble(maxs[i]));
+		    		
+		    		cell = row.createCell(5);
+		    		cell.setCellStyle(doubleFormat2);
+		    		cell.setCellValue(ElfValue.valueIntToDouble(mediane[maxi]));
+		    	}
+		    }
+		    
+		    if (save_grafico) {
+			    final int maxline = rown-1;
+	
+			    sheet = wb.createSheet(Config.getResource("TitleChart"));
+	
+			    Drawing drawing = sheet.createDrawingPatriarch();  
+		        ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 18, 25);  
+		  
+		        Chart chart = drawing.createChart(anchor);  
+		        ChartLegend legend = chart.getOrCreateLegend();  
+		        legend.setPosition(LegendPosition.TOP_RIGHT);  
+		  
+		        ScatterChartData data = chart.getChartDataFactory().createScatterChartData();  
+	//	        LineChartData data = chart.getChartDataFactory().createLineChartData();
+		        
+		        ValueAxis bottomAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.BOTTOM);  
+		        ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);  
+		        
+		        leftAxis.setMinimum(0.0);
+		        leftAxis.setMaximum(10.0);
+		        leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);  
+		  
+		        ChartDataSource<String> xs = DataSources.fromStringCellRange(sheetdata, new CellRangeAddress(1, maxline, 0, 0));
+		        ChartDataSource<Number> ys_val = DataSources.fromNumericCellRange(sheetdata, new CellRangeAddress(1, maxline, 1, 1));
+		        ChartDataSource<Number> ys_sens = DataSources.fromNumericCellRange(sheetdata, new CellRangeAddress(1, maxline, 6, 6));
+		        
+		        ScatterChartSeries data_val = data.addSerie(xs, ys_val);
+		        data_val.setTitle(Config.getResource("TitleMeasuredValues"));
+		        
+		        ScatterChartSeries data_sens = data.addSerie(xs, ys_sens);
+		        data_sens.setTitle(Config.getResource("TitleInstrumentSens"));
+		        
+		        chart.plot(data, bottomAxis, leftAxis);  
+		    }
+		    
+		    FileOutputStream fileOut = new FileOutputStream(filename);
+		    wb.write(fileOut);
+		    fileOut.close();
+			return true;
+		}
+		catch (Exception e) {
+			Utils.MessageBox(Config.getResource("MsgErrorXlsx")+"\n"+e.toString(), Config.getResource("TitleError"));
+			return false;
+		}
+		finally {
+			if (wb != null)
+				try { wb.close(); }
+				catch (IOException e) {}
+		}
 	}
 }

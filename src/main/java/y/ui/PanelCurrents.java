@@ -34,6 +34,7 @@ import y.elf.CurrentDb;
 import y.elf.CurrentValue;
 import y.elf.MeasurementValue;
 import y.elf.MeasurementDb.PeriodType;
+import y.graphs.XLSHelper;
 import y.utils.Config;
 import y.utils.Utils;
 
@@ -277,7 +278,6 @@ public class PanelCurrents  extends PanelYEM {
 			try { aSpinner.setValue(newdb.getEndDate().toDate()); } catch (Exception e) {}
 			filteredDB = masterDB = newdb;
 			applyFilters();
-//			refreshTable();
 		}
 	}
 	
@@ -387,26 +387,23 @@ public class PanelCurrents  extends PanelYEM {
         { return false; }
 	}
 	
-	public void exportXLS()
+	public boolean exportXLS()
 	{
-		String path = Utils.openFileDialog(Config.getResource("MsgSelectFile"), this, Config.getResource("TitleXLSFile"), "xlsx");
-		if (path.isEmpty())
-			return;
+		if (filteredDB == null)
+			return false;
 		
-		if (!path.toLowerCase().endsWith("xls") && !path.toLowerCase().endsWith("xlsx"))
+		String path = Utils.saveFileDialog(Config.getResource("MsgWhereToSaveData"), this, Config.getResource("MsgSelectFile"), "xlsx");
+		if (path.isEmpty())
+			return false;
+		if (!path.contains("."))
 			path += ".xlsx";
 		
-		try {
-//			XLSHelper.saveCorrentiSingole(path, filteredDB);	// TODO: exportXLS()
-		}
-		catch (Exception e) {
-			Utils.MessageBox(Config.getResource("MsgErrorXlsx")+"\n"+e.getMessage(), Config.getResource("TitleErrorXlsx"));
-		}
+		return XLSHelper.saveCurrentsData(path, filteredDB, false);
 	}
 	
 	public void exportGraph()
 	{
-		// TODO: exportGraph()
+
 	}
 
 	

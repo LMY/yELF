@@ -323,7 +323,7 @@ public class PanelCurrentCorrel extends PanelYEM
 			final double ui = Double.parseDouble(textErrI.getText());
 			final double ub = Double.parseDouble(textErrB.getText());
 			
-			XLSHelper.saveCorrenti(path, filteredDB, imax, ui, ub);
+			XLSHelper.saveCorrelationsCurrents(path, filteredDB, imax, ui, ub);
 		}
 		catch (Exception e) {
 			Utils.MessageBox(Config.getResource("MsgErrorXlsx")+"\n"+e.getMessage(), Config.getResource("TitleErrorXlsx"));
