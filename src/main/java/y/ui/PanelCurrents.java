@@ -501,7 +501,7 @@ public class PanelCurrents  extends PanelYEM {
 		if (filteredDB == null)
 			return false;
 		
-		String path = Utils.saveFileDialog(Config.getResource("MsgWhereToSaveData"), this, Config.getResource("MsgSelectFile"), "xlsx");
+		String path = Utils.saveFileDialog(Config.getResource("MsgWhereToSaveData"), this, Config.getResource("TitleXLSFile"), "xlsx");
 		if (path.isEmpty())
 			return false;
 		if (!path.contains("."))
@@ -515,7 +515,7 @@ public class PanelCurrents  extends PanelYEM {
 		if (filteredDB == null)
 			return false;
 
-		String path = Utils.saveFileDialog(Config.getResource("MsgWhereToSaveImage"), this, Config.getResource("MsgSelectFile"), "png");
+		String path = Utils.saveFileDialog(Config.getResource("MsgWhereToSaveImage"), this, "PNG Image", "png");
 		if (path.isEmpty())
 			return false;
 		if (!path.contains("."))

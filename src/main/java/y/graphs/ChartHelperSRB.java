@@ -84,7 +84,7 @@ public class ChartHelperSRB
         		
         		if (value.isValid())
         			for (int aix=0; aix<aserie.length; aix++)
-        				series.get(aix).add(aserie[aix], date, value.getValue(), mediane[d], medianevalide[d], med_max);
+        				series.get(aix).add(aserie[aix], date, value.getValue(), mediane[d], medianevalide[d], mediane[med_max]);
         	}
         }
 
