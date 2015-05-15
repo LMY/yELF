@@ -249,7 +249,7 @@ public class PanelCurrentCorrel extends PanelYEM
 				final double Rm2 = filteredDB.getURm2();				// 1/n^2 * sum R_i^2
 				final double uRm2 = Rm2*eR2;							// u(Rm)^2 = 1/n^2 * sum R_i^2 * e(R)^2
 				
-				final double uBmax = Math.sqrt( uRm2 + Rm*Rm*eI*eI )*Imax;
+				final double uBmax = Math.sqrt( uRm2 + eI*eI*Rm*Rm )*Imax;
 				final double eperc2 = 2*100*uBmax/Bmax;
 				
 				textBmax.setText(String.format("%.4f", Bmax) + " ± " + String.format("%.2f", eperc2)+"%");

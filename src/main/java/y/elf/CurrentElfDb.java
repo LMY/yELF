@@ -203,8 +203,8 @@ public class CurrentElfDb {
 		final List<CurrentValue> currents = getCurrentDb();
 		
 		for (int i=0; i<currentDb.size(); i++) {
-			final double cc = elfs.get(i).getValue();
-			final double ce = currents.get(i).getValue();
+			final double ce = elfs.get(i).getValue();
+			final double cc = currents.get(i).getValue();
 			
 			rm += ce/cc;
 		}
@@ -223,9 +223,9 @@ public class CurrentElfDb {
 		final List<CurrentValue> currents = getCurrentDb();
 
 		for (int i=0; i<size; i++) {
-			final double Ii = elfs.get(i).getValue();
-			final double Bi = currents.get(i).getValue();
-			final double Ri = Bi/Ii;
+			final double ce = elfs.get(i).getValue();
+			final double cc = currents.get(i).getValue();
+			final double Ri = ce/cc;
 			
 			Rm2 += Ri*Ri;
 		}
