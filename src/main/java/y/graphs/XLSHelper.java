@@ -62,15 +62,6 @@ import y.utils.Utils;
 
 public class XLSHelper
 {
-	public static int getIndexOfMax(int[] values)
-	{
-		int maxv = 0;
-		for (int i=1; i<values.length; i++)
-			if (values[i] > values[maxv])
-				maxv = i;
-		return maxv;
-	}
-
 	public static boolean saveElfData(String filename, ElfDb db, double sensibilita, boolean save_grafico)
 	{
 		final DateTime[] times = db.getPeriods();
@@ -78,14 +69,13 @@ public class XLSHelper
 		final int[] mediane = db.getOpValues();
 		final int[] maxs = db.getOpMaxDay();
 		final int[] counts = db.getOpValueCount();
+		final int maxi = db.getMaxidx();
 		
 		Workbook wb = null;
 		
 		try {
 			if (Utils.abortOnExistingAndDontOverwrite(filename))
 				return false;
-			
-			final int maxi = getIndexOfMax(mediane);
 			
 		    wb = new XSSFWorkbook();
 		    
@@ -564,14 +554,13 @@ public class XLSHelper
 		final int[] mediane = db.getOpValues();
 		final int[] maxs = db.getOpMaxDay();
 		final int[] counts = db.getOpValueCount();
+		final int maxi = db.getMaxidx();
 		
 		Workbook wb = null;
 		
 		try {
 			if (Utils.abortOnExistingAndDontOverwrite(filename))
 				return false;
-			
-			final int maxi = getIndexOfMax(mediane);
 			
 		    wb = new XSSFWorkbook();
 		    
