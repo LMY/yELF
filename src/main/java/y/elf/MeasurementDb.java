@@ -145,14 +145,13 @@ public abstract class MeasurementDb {
     		if (opValueCount[i] > opValueCount[mm])
     			mm = i;
     	
-        final double THRES_FACTOR = Config.getInstance().getMinDataCoverage100();
-    	final int thres = (int)Math.round(opValueCount[mm]*THRES_FACTOR);
-    	maxidx=0;
+    	final int thres = (int)Math.round(opValueCount[mm]*Config.getInstance().getMinDataCoverage100());
+    	maxidx=-1;
     	for (int i=0; i<opValues.length; i++)
     		if (opValueCount[i] >= thres) {
     			opValid[i] = true;
     			
-    			if (opValues[i] > opValues[maxidx])
+    			if (maxidx < 0 || opValues[i] > opValues[maxidx])
     				maxidx = i;
     		}
     		else
