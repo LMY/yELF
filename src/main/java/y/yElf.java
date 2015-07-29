@@ -24,8 +24,8 @@ import y.utils.Config;
 
 public class yElf
 {
-	public static final String ReleaseDate = "2015-05-21";
-	public static final String VersionString = "2.18";
+	public static final String ReleaseDate = "2015-07-29";
+	public static final String VersionString = "2.19rc1";
 	
 	public static void main(String args[])
 	{

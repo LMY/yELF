@@ -89,6 +89,8 @@ public class PanelConfig extends JPanel
 	private JTextField graphYmin;
 	private JTextField graphYmax;
 	
+	private JTextField lineWidth;
+	
 	private JTextField legendSize;
 	private JTextField legendX;
 	private JTextField legendY;
@@ -176,6 +178,7 @@ public class PanelConfig extends JPanel
 		graphYmin = new JTextField();
 		graphYmax = new JTextField();
 		
+		lineWidth = new JTextField();
 		legendSize = new JTextField();
 		legendX = new JTextField();
 		legendY = new JTextField();
@@ -253,6 +256,9 @@ public class PanelConfig extends JPanel
 		generalTab.add(pictureWidth);
 		generalTab.add(new JLabel(" "+Config.getResource("TitlePicHeight")));
 		generalTab.add(pictureHeight);
+		
+		generalTab.add(new JLabel(" "+Config.getResource("TitleLineWidth")));
+		generalTab.add(lineWidth);
 		
 		generalTab.add(new JLabel(" "+Config.getResource("TitleYrangeMin")));
 		generalTab.add(graphYmin);
@@ -696,6 +702,9 @@ public class PanelConfig extends JPanel
 			Utils.MessageBox(conf.getResources().getString("MsgChangesOnRestart"), conf.getResources().getString("TitleChangesOnRestart"));
 		
 		
+		
+		try { conf.setLineWidth(Double.parseDouble(lineWidth.getText())); } catch (Exception e) {}
+		
 		try { conf.setPictureHeight(Integer.parseInt(pictureHeight.getText())); } catch (Exception e) {}
 		try { conf.setPictureWidth(Integer.parseInt(pictureWidth.getText())); } catch (Exception e) {}
 		
@@ -772,6 +781,7 @@ public class PanelConfig extends JPanel
 		}
 		catch (Exception e) {}
 		
+		lineWidth.setText(""+conf.getLineWidth());
 		pictureHeight.setText(""+conf.getPictureHeight());
 		pictureWidth.setText(""+conf.getPictureWidth());
 		elfValueFieldn.setText(""+conf.getElfValuefieldn());

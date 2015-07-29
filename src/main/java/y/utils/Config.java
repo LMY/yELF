@@ -75,6 +75,8 @@ public class Config
 	
 	private double minDataCoverage100;
 	
+	private double lineWidth;
+	
 	private int elfValuefieldn;
 	private int srbValuefieldn;
 	private int currentValuefieldn;
@@ -127,6 +129,7 @@ public class Config
 		elfValuefieldn = 3;
 		srbValuefieldn = 3;
 		minDataCoverage100 = 0.75;
+		lineWidth = 0.2;
 		currentValuefieldn = 2;
 		titleFont = DEFAULT_FONT;
 		axisFormat = DEFAULT_TIMEFMT;
@@ -265,6 +268,8 @@ public class Config
 					currentValuefieldn = Integer.parseInt(arg);
 				else if (command.equals("minDataCoverage100"))
 					minDataCoverage100 = Double.parseDouble(arg);
+				else if (command.equals("lineWidth"))
+					lineWidth = Double.parseDouble(arg);
 				
 				else if (command.equals("forceYmin"))
 					forceYmin = Integer.parseInt(arg);
@@ -363,6 +368,7 @@ public class Config
 			
 			bf.write("workingFolder: " + workingFolder + "\n");
 			bf.write("minDataCoverage100: " + minDataCoverage100 + "\n");
+			bf.write("lineWidth: " + lineWidth + "\n");
 			
 			bf.write("instrumentLowELF: " + instrumentLowELF + "\n");
 			bf.write("instrumentLowSRB: " + instrumentLowSRB + "\n");
@@ -604,5 +610,13 @@ public class Config
 
 	public void setOperationCurrent(DataFunction operationCurrent) {
 		this.operationCurrent = operationCurrent;
+	}
+
+	public double getLineWidth() {
+		return lineWidth;
+	}
+
+	public void setLineWidth(double lineWidth) {
+		this.lineWidth = lineWidth;
 	}
 }

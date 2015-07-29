@@ -126,7 +126,7 @@ public class ChartHelperSRB
         plot.setRangeGridlinePaint(Color.white);
         
         final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        final Stroke lineStroke = new BasicStroke(0.2f);
+        final Stroke lineStroke = new BasicStroke((float)config.getLineWidth());
         
         for (int si=0; si<series.size(); si++) {
         	final ConfigSerie cs = series.get(si);
