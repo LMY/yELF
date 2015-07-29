@@ -75,7 +75,11 @@ public class Config
 	
 	private double minDataCoverage100;
 	
-	private double lineWidth;
+	private double lineWidthELF;
+	private double lineWidthSRB;
+	
+	private Color colorBackgroundELF;
+	private Color colorBackgroundSRB;
 	
 	private int elfValuefieldn;
 	private int srbValuefieldn;
@@ -129,7 +133,11 @@ public class Config
 		elfValuefieldn = 3;
 		srbValuefieldn = 3;
 		minDataCoverage100 = 0.75;
-		lineWidth = 0.2;
+		lineWidthELF = 0.2;
+		lineWidthSRB = 0.2;
+		colorBackgroundELF = Color.lightGray;
+		colorBackgroundSRB = Color.lightGray;
+		
 		currentValuefieldn = 2;
 		titleFont = DEFAULT_FONT;
 		axisFormat = DEFAULT_TIMEFMT;
@@ -268,8 +276,14 @@ public class Config
 					currentValuefieldn = Integer.parseInt(arg);
 				else if (command.equals("minDataCoverage100"))
 					minDataCoverage100 = Double.parseDouble(arg);
-				else if (command.equals("lineWidth"))
-					lineWidth = Double.parseDouble(arg);
+				else if (command.equals("lineWidthELF"))
+					lineWidthELF = Double.parseDouble(arg);
+				else if (command.equals("lineWidthSRB"))
+					lineWidthSRB = Double.parseDouble(arg);
+				else if (command.equals("colorBackgroundELF"))
+					colorBackgroundELF = stringToColor(arg);
+				else if (command.equals("colorBackgroundSRB"))
+					colorBackgroundSRB = stringToColor(arg);
 				
 				else if (command.equals("forceYmin"))
 					forceYmin = Integer.parseInt(arg);
@@ -368,7 +382,11 @@ public class Config
 			
 			bf.write("workingFolder: " + workingFolder + "\n");
 			bf.write("minDataCoverage100: " + minDataCoverage100 + "\n");
-			bf.write("lineWidth: " + lineWidth + "\n");
+			bf.write("lineWidthELF: " + lineWidthELF + "\n");
+			bf.write("lineWidthSRB: " + lineWidthSRB + "\n");
+			
+			bf.write("colorBackgroundELF: " + colorToString(colorBackgroundELF) + "\n");
+			bf.write("colorBackgroundSRB: " + colorToString(colorBackgroundSRB) + "\n");
 			
 			bf.write("instrumentLowELF: " + instrumentLowELF + "\n");
 			bf.write("instrumentLowSRB: " + instrumentLowSRB + "\n");
@@ -409,6 +427,22 @@ public class Config
 		catch (Exception e) { return false; }	
 	}
 	
+	public static String COLOR_SEPARATOR = "#";
+	
+	public static String colorToString(Color x) {
+		return x.getRed() + COLOR_SEPARATOR + x.getGreen() + COLOR_SEPARATOR + x.getBlue();
+	}
+	
+	public static Color stringToColor(String x) {
+		final String[] parts = x.split(COLOR_SEPARATOR);
+		try {
+			return new Color(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));  
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
+	
 	final static String[] columnNames = { "Data", "Valore", "Massimo", "#valori" };
 	
 	public String[] getConfigColumnNames() {
@@ -422,7 +456,6 @@ public class Config
 	public String[] getDataColumnNames() {
 		return new String[] { getInternalResource("TitleDate"), getInternalResource("TitleValue"), getInternalResource("TitleMaxM"), getInternalResource("TitleNumberOfData") };
 	}
-	
 	
 	public int getPictureWidth() {
 		return pictureWidth;
@@ -612,11 +645,35 @@ public class Config
 		this.operationCurrent = operationCurrent;
 	}
 
-	public double getLineWidth() {
-		return lineWidth;
+	public double getLineWidthELF() {
+		return lineWidthELF;
 	}
 
-	public void setLineWidth(double lineWidth) {
-		this.lineWidth = lineWidth;
+	public void setLineWidthELF(double lineWidthELF) {
+		this.lineWidthELF = lineWidthELF;
+	}
+
+	public double getLineWidthSRB() {
+		return lineWidthSRB;
+	}
+
+	public void setLineWidthSRB(double lineWidthSRB) {
+		this.lineWidthSRB = lineWidthSRB;
+	}
+
+	public Color getColorBackgroundELF() {
+		return colorBackgroundELF;
+	}
+
+	public void setColorBackgroundELF(Color colorBackgroundELF) {
+		this.colorBackgroundELF = colorBackgroundELF;
+	}
+
+	public Color getColorBackgroundSRB() {
+		return colorBackgroundSRB;
+	}
+
+	public void setColorBackgroundSRB(Color colorBackgroundSRB) {
+		this.colorBackgroundSRB = colorBackgroundSRB;
 	}
 }

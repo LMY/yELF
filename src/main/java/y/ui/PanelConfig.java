@@ -26,6 +26,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -89,7 +91,10 @@ public class PanelConfig extends JPanel
 	private JTextField graphYmin;
 	private JTextField graphYmax;
 	
-	private JTextField lineWidth;
+	private JTextField lineWidthELF;
+	private JTextField lineWidthSRB;
+	private JPanel colorBackELF;
+	private JPanel colorBackSRB;
 	
 	private JTextField legendSize;
 	private JTextField legendX;
@@ -178,7 +183,48 @@ public class PanelConfig extends JPanel
 		graphYmin = new JTextField();
 		graphYmax = new JTextField();
 		
-		lineWidth = new JTextField();
+		lineWidthELF = new JTextField();
+		lineWidthSRB = new JTextField();
+		
+		colorBackELF = new JPanel();
+		colorBackELF.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				final ColorEditor ce = new ColorEditor();
+				ce.actionPerformed(new ActionEvent(this, 0, "edit"));
+				colorBackELF.setBackground((Color) ce.getCellEditorValue());
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+		});
+		
+		colorBackSRB = new JPanel();
+		colorBackSRB.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				final ColorEditor ce = new ColorEditor();
+				ce.actionPerformed(new ActionEvent(this, 0, "edit"));
+				colorBackSRB.setBackground((Color) ce.getCellEditorValue());
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+		});
+		
+		
 		legendSize = new JTextField();
 		legendX = new JTextField();
 		legendY = new JTextField();
@@ -256,9 +302,6 @@ public class PanelConfig extends JPanel
 		generalTab.add(pictureWidth);
 		generalTab.add(new JLabel(" "+Config.getResource("TitlePicHeight")));
 		generalTab.add(pictureHeight);
-		
-		generalTab.add(new JLabel(" "+Config.getResource("TitleLineWidth")));
-		generalTab.add(lineWidth);
 		
 		generalTab.add(new JLabel(" "+Config.getResource("TitleYrangeMin")));
 		generalTab.add(graphYmin);
@@ -361,6 +404,11 @@ public class PanelConfig extends JPanel
 		t1up.add(comboFilterSRB);
 		t1up.add(new JLabel(" "+Config.getResource("TitleOperationTypeSRB")));
 		t1up.add(comboOpSRB);
+		t1up.add(new JLabel(" "+Config.getResource("TitleBackgroundColor")));
+		t1up.add(colorBackSRB);		
+		t1up.add(new JLabel(" "+Config.getResource("TitleLineWidth")));
+		t1up.add(lineWidthSRB);
+		
 		srbTab.add(t1up, BorderLayout.NORTH);
 		
 		
@@ -431,6 +479,10 @@ public class PanelConfig extends JPanel
 		t2up.add(comboFilterELF);
 		t2up.add(new JLabel(" "+Config.getResource("TitleOperationTypeCurrent")));
 		t2up.add(comboOpELF);
+		t2up.add(new JLabel(" "+Config.getResource("TitleBackgroundColor")));
+		t2up.add(colorBackELF);
+		t2up.add(new JLabel(" "+Config.getResource("TitleLineWidth")));
+		t2up.add(lineWidthELF);
 		elfTab.add(t2up, BorderLayout.NORTH);
 		
 		
@@ -500,7 +552,6 @@ public class PanelConfig extends JPanel
 		t3x.add(curBdel);
 		t3x.add(curDefault);
 		currentTab.add(t3x, BorderLayout.SOUTH);
-		
 		
 		
 		JPanel btnPanel = new JPanel();
@@ -702,8 +753,11 @@ public class PanelConfig extends JPanel
 			Utils.MessageBox(conf.getResources().getString("MsgChangesOnRestart"), conf.getResources().getString("TitleChangesOnRestart"));
 		
 		
+		conf.setColorBackgroundELF(colorBackELF.getBackground());
+		conf.setColorBackgroundSRB(colorBackSRB.getBackground());
 		
-		try { conf.setLineWidth(Double.parseDouble(lineWidth.getText())); } catch (Exception e) {}
+		try { conf.setLineWidthELF(Double.parseDouble(lineWidthELF.getText())); } catch (Exception e) {}
+		try { conf.setLineWidthSRB(Double.parseDouble(lineWidthSRB.getText())); } catch (Exception e) {}
 		
 		try { conf.setPictureHeight(Integer.parseInt(pictureHeight.getText())); } catch (Exception e) {}
 		try { conf.setPictureWidth(Integer.parseInt(pictureWidth.getText())); } catch (Exception e) {}
@@ -781,7 +835,10 @@ public class PanelConfig extends JPanel
 		}
 		catch (Exception e) {}
 		
-		lineWidth.setText(""+conf.getLineWidth());
+		colorBackELF.setBackground(conf.getColorBackgroundELF());
+		colorBackSRB.setBackground(conf.getColorBackgroundSRB());
+		lineWidthELF.setText(""+conf.getLineWidthELF());
+		lineWidthSRB.setText(""+conf.getLineWidthSRB());
 		pictureHeight.setText(""+conf.getPictureHeight());
 		pictureWidth.setText(""+conf.getPictureWidth());
 		elfValueFieldn.setText(""+conf.getElfValuefieldn());

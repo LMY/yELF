@@ -121,12 +121,12 @@ public class ChartHelperSRB
 		plot.addAnnotation(ta);
 		chart.removeLegend();
         
-        plot.setBackgroundPaint(Color.lightGray);
+        plot.setBackgroundPaint(config.getColorBackgroundSRB());
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
         
         final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        final Stroke lineStroke = new BasicStroke((float)config.getLineWidth());
+        final Stroke lineStroke = new BasicStroke((float)config.getLineWidthSRB());
         
         for (int si=0; si<series.size(); si++) {
         	final ConfigSerie cs = series.get(si);
