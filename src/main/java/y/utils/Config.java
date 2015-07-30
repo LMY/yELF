@@ -133,8 +133,8 @@ public class Config
 		elfValuefieldn = 3;
 		srbValuefieldn = 3;
 		minDataCoverage100 = 0.75;
-		lineWidthELF = 0.2;
-		lineWidthSRB = 0.2;
+		lineWidthELF = 1;
+		lineWidthSRB = 1;
 		colorBackgroundELF = Color.lightGray;
 		colorBackgroundSRB = Color.lightGray;
 		

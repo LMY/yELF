@@ -138,7 +138,8 @@ public class ChartHelperELF
         	if (size > 0)
         		renderer.setSeriesShape(si, ShapeUtilities.createRegularCross(size, size) );
         	
-            renderer.setSeriesOutlineStroke(si, lineStroke);
+        	renderer.setSeriesStroke(si, lineStroke);
+//            renderer.setSeriesOutlineStroke(si, lineStroke);
            	renderer.setSeriesPaint(si, cs.getColor());
         }
         plot.setRenderer(renderer);
