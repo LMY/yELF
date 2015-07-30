@@ -152,6 +152,14 @@ public class ChartHelperELF
         rangeAxis.setLowerMargin(0.01);
         rangeAxis.setUpperMargin(0.01);
 
+        {
+	        final Font axisFont = config.getAxisFont();
+	        if (axisFont != null) {
+	        	rangeAxis.setLabelFont(axisFont);
+	        	plot.getRangeAxis().setLabelFont(axisFont);
+	        }
+	    }
+        
         final String xaxisFmt = config.getAxisFormat();
         
 		if (xaxisFmt == null || xaxisFmt.isEmpty()) {
@@ -168,6 +176,7 @@ public class ChartHelperELF
 		final Font titleFont = config.getTitleFont();
         if (titleFont != null)
         	chart.getTitle().setFont(titleFont);
+        
         
         return chart;
     }

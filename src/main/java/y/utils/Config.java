@@ -90,6 +90,7 @@ public class Config
 	private int currentLowCut;
 	
 	private Font titleFont;
+	private Font axisFont;
 	private String axisFormat;
 	
 	private int forceYmin;
@@ -107,6 +108,7 @@ public class Config
 	private FilterFunction filterCurrent;
 	
 	public static final Font DEFAULT_FONT = new Font("Times New Roman", Font.PLAIN, 22);
+	public static final Font DEFAULT_AXIS_FONT = new Font("Times New Roman", Font.PLAIN, 12);
 	public static final double DEFAULT_LEGRATIO = 0.15;
 	public static final String DEFAULT_TIMEFMT = "HH:MM dd-MMM-yyyy";
 	public static final String DEFAULT_SHORTTIMEFMT = "dd-MMM-yyyy";
@@ -140,6 +142,7 @@ public class Config
 		
 		currentValuefieldn = 2;
 		titleFont = DEFAULT_FONT;
+		axisFont = DEFAULT_AXIS_FONT;
 		axisFormat = DEFAULT_TIMEFMT;
 		
 		operationSRB = new RmsFunction();
@@ -307,10 +310,17 @@ public class Config
 				}
 				
 				else if (command.equals("titleFont")) {
-					String[] ele = arg.split(",");
-					int fontstyle = (ele[1].contains("i")?Font.ITALIC:Font.PLAIN) | (ele[1].contains("b")?Font.BOLD:Font.PLAIN) | Font.PLAIN;
+					final String[] ele = arg.split(",");
+					final int fontstyle = (ele[1].contains("i")?Font.ITALIC:Font.PLAIN) | (ele[1].contains("b")?Font.BOLD:Font.PLAIN) | Font.PLAIN;
 					
 					titleFont = new Font(ele[0], fontstyle, Integer.parseInt(ele[2].trim()));
+				}
+				
+				else if (command.equals("axisFont")) {
+					final String[] ele = arg.split(",");
+					final int fontstyle = (ele[1].contains("i")?Font.ITALIC:Font.PLAIN) | (ele[1].contains("b")?Font.BOLD:Font.PLAIN) | Font.PLAIN;
+					
+					axisFont = new Font(ele[0], fontstyle, Integer.parseInt(ele[2].trim()));
 				}
 				
 				else if (command.equals("constvalue")) {
@@ -406,9 +416,13 @@ public class Config
 			}
 			
 			bf.write("titleFont: " + titleFont.getName() + ", "
-						+ (titleFont.isBold()?"b":"") + (titleFont.isItalic()?"i":"") + ", "						
+						+ (titleFont.isBold()?"b":"") + (titleFont.isItalic()?"i":"") + ", "
 						+ titleFont.getSize() + "\n");
 			bf.write("axisFormat: " + axisFormat + "\n");
+			
+			bf.write("axisFont: " + axisFont.getName() + ", "
+					+ (axisFont.isBold()?"b":"") + (axisFont.isItalic()?"i":"") + ", "
+					+ axisFont.getSize() + "\n");
 			
 			for (String s : const_values.keySet()) {
 				bf.write("constvalue: "+s);	// name
@@ -675,5 +689,13 @@ public class Config
 
 	public void setColorBackgroundSRB(Color colorBackgroundSRB) {
 		this.colorBackgroundSRB = colorBackgroundSRB;
+	}
+
+	public Font getAxisFont() {
+		return axisFont;
+	}
+
+	public void setAxisFont(Font axisFont) {
+		this.axisFont = axisFont;
 	}
 }

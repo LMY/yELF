@@ -108,6 +108,7 @@ public class PanelConfig extends JPanel
 	private JTextField axisFormat;
 	
 	private JButton titleFont;
+	private JButton axisFont;
 	
 	private JTable srbSeries;
 	private JTable emSeries;
@@ -238,7 +239,15 @@ public class PanelConfig extends JPanel
 		titleFont.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				chooseFont();
+				chooseFontTitle();
+			}
+		});
+		
+		axisFont = new JButton(Config.getResource("TitleSelect"));
+		axisFont.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				chooseFontAxis();
 			}
 		});
 		
@@ -338,6 +347,8 @@ public class PanelConfig extends JPanel
 		generalTab.add(axisPanel);
 		generalTab.add(new JLabel(" "+Config.getResource("TitleTitleFont")));
 		generalTab.add(titleFont);
+		generalTab.add(new JLabel(" "+Config.getResource("TitleAxisFont")));
+		generalTab.add(axisFont);
 		
 		srbTab.setLayout(new BorderLayout());
 		srbTab.add(srbSeries/*new JScrollPane(srbSeries)*/, BorderLayout.CENTER);
@@ -718,7 +729,7 @@ public class PanelConfig extends JPanel
 		}
 	}
 
-	private void chooseFont()
+	private void chooseFontTitle()
 	{
 		JFontChooser fontChooser = new JFontChooser();
 		int result = fontChooser.showDialog(null);
@@ -730,6 +741,18 @@ public class PanelConfig extends JPanel
 		conf.Save();
 	}
 
+	private void chooseFontAxis()
+	{
+		JFontChooser fontChooser = new JFontChooser();
+		int result = fontChooser.showDialog(null);
+		if (result != JFontChooser.OK_OPTION)
+			return;
+		
+		Config conf = Config.getInstance();
+		conf.setAxisFont(fontChooser.getSelectedFont());
+		conf.Save();
+	}
+	
 	public void Save()
 	{
 		Config conf = Config.getInstance();
