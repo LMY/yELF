@@ -786,8 +786,8 @@ public class PanelConfig extends JPanel
 		} catch (Exception e) {}
 		
 		try { conf.setLegendSize(Double.parseDouble(legendSize.getText())); } catch (Exception e) {}
-		try { conf.setLegendX(Integer.parseInt(legendX.getText())); } catch (Exception e) {}
-		try { conf.setLegendY(Integer.parseInt(legendY.getText())); } catch (Exception e) {}
+		try { conf.setLegendX(Double.parseDouble(legendX.getText())); } catch (Exception e) {}
+		try { conf.setLegendY(Double.parseDouble(legendY.getText())); } catch (Exception e) {}
 		
 		conf.setWorkingFolder(workingFolder.getText());
 		
