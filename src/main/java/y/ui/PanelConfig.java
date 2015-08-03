@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -731,8 +732,12 @@ public class PanelConfig extends JPanel
 
 	private void chooseFontTitle()
 	{
-		JFontChooser fontChooser = new JFontChooser();
-		int result = fontChooser.showDialog(null);
+		final JFontChooser fontChooser = new JFontChooser();
+		final Font selectedFont = Config.getInstance().getTitleFont();
+		if (selectedFont != null)
+			fontChooser.setSelectedFont(selectedFont);
+		
+		final int result = fontChooser.showDialog(null);
 		if (result != JFontChooser.OK_OPTION)
 			return;
 		
@@ -743,8 +748,12 @@ public class PanelConfig extends JPanel
 
 	private void chooseFontAxis()
 	{
-		JFontChooser fontChooser = new JFontChooser();
-		int result = fontChooser.showDialog(null);
+		final JFontChooser fontChooser = new JFontChooser();
+		final Font selectedFont = Config.getInstance().getAxisFont();
+		if (selectedFont != null)
+			fontChooser.setSelectedFont(selectedFont);
+		
+		final int result = fontChooser.showDialog(null);
 		if (result != JFontChooser.OK_OPTION)
 			return;
 		
