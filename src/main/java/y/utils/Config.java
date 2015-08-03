@@ -107,8 +107,8 @@ public class Config
 	private FilterFunction filterELF;
 	private FilterFunction filterCurrent;
 	
-	public static final Font DEFAULT_FONT = new Font("Times New Roman", Font.PLAIN, 22);
-	public static final Font DEFAULT_AXIS_FONT = new Font("Times New Roman", Font.PLAIN, 12);
+	public static final Font DEFAULT_FONT = new Font("Times New Roman", Font.PLAIN, 28);
+	public static final Font DEFAULT_AXIS_FONT = new Font("Times New Roman", Font.BOLD, 18);
 	public static final double DEFAULT_LEGRATIO = 0.15;
 	public static final String DEFAULT_TIMEFMT = "HH:MM dd-MMM-yyyy";
 	public static final String DEFAULT_SHORTTIMEFMT = "dd-MMM-yyyy";
