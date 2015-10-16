@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import org.joda.time.DateTime;
 import org.joda.time.MutableDateTime;
 
+
 public class DbReader {
 
 	public final static String DEFAULT_CSV_SEPARATOR = ";";
@@ -143,8 +144,8 @@ public class DbReader {
 		try {
 			reader = new BufferedReader(new FileReader(filename));
 			String line;
-			MutableDateTime lasttime = new MutableDateTime(0, 0, 0, 0, 0, 0, 0);
-			final MutableDateTime invalidtime = new MutableDateTime(0, 0, 0, 0, 0, 0, 0);
+			MutableDateTime lasttime = new MutableDateTime(0, 1, 1, 0, 0, 0, 0);
+			final MutableDateTime invalidtime = new MutableDateTime(0, 1, 1, 0, 0, 0, 0);
 			
 			while ((line=reader.readLine()) != null) {
 				if (line.isEmpty())
@@ -194,7 +195,9 @@ public class DbReader {
 				catch (Exception e) { continue; } // on error, skip line
 			}
 		}
-		catch (Exception e) {}
+		catch (Exception e) {
+//			System.out.println(e.getMessage());
+		}
 		finally {
 			if (reader != null)
 				try { reader.close();}
