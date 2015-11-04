@@ -244,9 +244,9 @@ public class PanelSRB extends PanelYEM
 				}
     		});
 	    	data[data.length-1] = new Object[4];
-	    	data[data.length-1][0] = Config.getResource("MsgMax")+"("+Utils.toDateString(maxvalue.getTime())+")";
-    		data[data.length-1][1] = MeasurementValue.valueIntToDouble(maxvalue.getValue());
-    		data[data.length-1][2] = MeasurementValue.valueIntToDouble(maxvalue.getMax());
+	    	data[data.length-1][0] = Config.getResource("MsgMax")+"("+(maxvalue != null ? Utils.toDateString(maxvalue.getTime()) : "NONE")+")";
+    		data[data.length-1][1] = maxvalue != null ? MeasurementValue.valueIntToDouble(maxvalue.getValue()) : "NONE";
+    		data[data.length-1][2] = maxvalue != null ? MeasurementValue.valueIntToDouble(maxvalue.getMax()) : "NONE";	    	
     		data[data.length-1][3] = 1;
 		}
 	    
