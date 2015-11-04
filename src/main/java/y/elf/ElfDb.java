@@ -175,7 +175,7 @@ public class ElfDb extends MeasurementDb
 		
 		if (rawData != null && !rawData.isEmpty()) {
 			for (ElfValue e : rawData)
-				if (ret == null || comparator.compare(e, ret) > 1)
+				if ((ret == null || comparator.compare(e, ret) > 1) && e.isValid())
 					ret = e;
 		}
 		else
