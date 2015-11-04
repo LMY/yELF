@@ -4,11 +4,16 @@ apply plugin: 'eclipse'
 
 
 mainClassName = "y.yElf"
-version = '2.19rc2'
+version = '2.19-build' + getDate()
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyMMdd')
+    return formattedDate
+}
 
 repositories {
     mavenCentral()
@@ -18,7 +23,7 @@ repositories {
 }
 
 dependencies {
-	compile 'joda-time:joda-time:2.7'
+	compile 'joda-time:joda-time:2.8'
 	compile 'org.apache.poi:poi-ooxml:3.11'
 	compile 'org.apache.poi:poi:3.11'
 	compile 'org.jfree:jfreechart:1.0.19'
