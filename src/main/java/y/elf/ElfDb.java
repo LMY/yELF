@@ -175,7 +175,7 @@ public class ElfDb extends MeasurementDb
 		
 		if (rawData != null && !rawData.isEmpty()) {
 			for (ElfValue e : rawData)
-				if ((ret == null || comparator.compare(e, ret) > 1) && e.isValid())
+				if ((ret == null || comparator.compare(e, ret) > 0) && e.isValid())
 					ret = e;
 		}
 		else
@@ -183,7 +183,7 @@ public class ElfDb extends MeasurementDb
 				for (int y=0; y<sampledData.length; y++)
 					for (int x=0; x<sampledData[y].length; x++)
 						// consider only valid data
-						if ((ret == null || comparator.compare(sampledData[y][x], ret) > 1) && sampledData[y][x].isValid())
+						if ((ret == null || comparator.compare(sampledData[y][x], ret) > 0) && sampledData[y][x].isValid())
 							ret = sampledData[y][x];
 		
 		return ret;
