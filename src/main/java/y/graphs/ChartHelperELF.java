@@ -32,6 +32,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYTitleAnnotation;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -171,6 +172,10 @@ public class ChartHelperELF
 		}
 		else
         	rangeAxis.setDateFormatOverride(new SimpleDateFormat(xaxisFmt, DateFormatSymbols.getInstance()));
+		
+		final NumberAxis domain = (NumberAxis) plot.getDomainAxis();
+		if (config.getForceYmin() != 0 || config.getForceYmin() != 0)
+			domain.setRange(config.getForceYmin(), config.getForceYmin());
 		
 		// title
 		final Font titleFont = config.getTitleFont();
