@@ -828,8 +828,8 @@ public class PanelConfig extends JPanel
 			conf.setForceYmax(0);
 		}
 		else {
-			try { conf.setForceYmin(Integer.parseInt(graphYmin.getText())); } catch (Exception e) {}
-			try { conf.setForceYmax(Integer.parseInt(graphYmax.getText())); } catch (Exception e) {}
+			try { conf.setForceYmin(ElfValue.valueStringToInt(graphYmin.getText())); } catch (Exception e) {}
+			try { conf.setForceYmax(ElfValue.valueStringToInt(graphYmax.getText())); } catch (Exception e) {}
 		}
 		
 		try { conf.setInstrumentLowELF(ElfValue.valueStringToInt(instrumentLowELF.getText())); } catch (Exception e) {}

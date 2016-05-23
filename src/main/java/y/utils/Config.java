@@ -410,7 +410,7 @@ public class Config
 			bf.write("filterSRB: " + filterSRB.getKey() + "\n");
 			bf.write("filterCurrent: " + filterCurrent.getKey() + "\n");
 			
-			if (forceYmin != 0 && forceYmax != 0) {
+			if (forceYmin != 0 || forceYmax != 0) {
 				bf.write("forceYmin: " + forceYmin + "\n");
 				bf.write("forceYmax: " + forceYmax + "\n");
 			}

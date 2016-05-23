@@ -173,8 +173,8 @@ public class ChartHelperSRB
         	rangeAxis.setDateFormatOverride(new SimpleDateFormat(xaxisFmt, DateFormatSymbols.getInstance()));
 		
 		final ValueAxis domain = plot.getRangeAxis();
-		if (config.getForceYmin() != 0 || config.getForceYmin() != 0)
-			domain.setRange(config.getForceYmin(), config.getForceYmax());
+		if (config.getForceYmin() != 0 || config.getForceYmax() != 0)
+			domain.setRange(ElfValue.valueIntToDouble(config.getForceYmin()), ElfValue.valueIntToDouble(config.getForceYmax()));
 		
 		// title
 		final Font titleFont = config.getTitleFont();
